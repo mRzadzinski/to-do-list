@@ -1,4 +1,4 @@
-
+$dark-gray: #5f6368;
 
 body {
     display: flex;
@@ -9,6 +9,7 @@ body {
     width: 100vw;
     height: 100vh;
     font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+    font-size: medium;
 }
 
 .container {
@@ -19,7 +20,48 @@ body {
 
     .list-name-container {
         display: grid;
+        grid-template: 1fr 1fr / 1fr 40px;
         height: 63px;
+        padding: 0 6px 0 16px;
+
+        #task-header {
+            grid-area: 1 / 1 / 2 / 2;
+            align-self: end;
+            color: #80868b;
+            font-size: .6rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            padding-bottom: 7px;
+        }
+
+        #list-name {
+            display: flex;
+            align-items: flex-start;
+            grid-area: 2 / 1 / 3 / 2;
+            color: $dark-gray;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 1.05rem;
+            margin-top: -3px;
+
+            #arrow-down-icon {
+                fill: $dark-gray;
+                transform: scale(.5);
+                margin: -9px 0 0 -11px;
+            }
+        }
+
+        #close-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            grid-area: 1 / 2 / 3 / 3;
+            
+            #close-icon {
+                transform: scale(1.1);
+                fill: #5f6368
+            }
+        }
     }
 
     .tasks-container {
