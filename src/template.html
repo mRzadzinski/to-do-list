@@ -12,7 +12,7 @@
         <div class="list-name-container">
             <div id="task-header">TASKS</div>
             <div id="list-name">
-                <div>Code</div>
+                <div id="list-name-text">Code</div>
                 <svg id="arrow-down-icon" xmlns="http://www.w3.org/2000/svg" height="30" width="48"><path d="m24 30-10-9.95h20Z"/></svg>
             </div>
             <div id="close-container">
@@ -27,12 +27,13 @@
         </div>
 
         <div class="tasks-container">
+            
             <div class="task">
                 <div class="task-main">
                     <div class="circle-container">
                         <img src="" alt="circle-icon" class="circle-icon">
                     </div>
-                    <div class="task-content">Find x and 'arrow down'  google icons</div>
+                    <div class="task-content">Add textarea to text content and details</div>
                     <div class="task-icon-container">
                         <svg class="more-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M24.05 41.7q-1.25 0-2.125-.875t-.875-2.075q0-1.2.875-2.1.875-.9 2.075-.9 1.25 0 2.1.9.85.9.85 2.1 0 1.2-.85 2.075-.85.875-2.05.875Zm0-14.75q-1.25 0-2.125-.875T21.05 24q0-1.25.875-2.1.875-.85 2.075-.85 1.25 0 2.1.85.85.85.85 2.05 0 1.25-.85 2.125t-2.05.875Zm0-14.7q-1.25 0-2.125-.875T21.05 9.25q0-1.25.875-2.125T24 6.25q1.25 0 2.1.875.85.875.85 2.125t-.85 2.125q-.85.875-2.05.875Z"/></svg>
                     </div>
@@ -55,7 +56,8 @@
                     </div>
                 </div>
             </div>
-            <div class="task">
+
+            <div class="task task-clicked">
                 <div class="task-main">
                     <div class="circle-container">
                         <img src="" alt="circle-icon" class="circle-icon">
@@ -69,10 +71,20 @@
                     </div>
                 </div>
                 <div class="task-details">Compartmentalize</div>
-                <div class="task-date">Today, 10:00 AM</div>
+                <div class="task-date">
+                    <div>Today, 10:00 AM</div>
+                    <input class="time-picker" type="datetime-local">
+                </div>
+                <svg class="drag-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M17.2 40.65q-1.6 0-2.725-1.125T13.35 36.8q0-1.6 1.125-2.7T17.2 33q1.6 0 2.7 1.1t1.1 2.7q0 1.6-1.1 2.725t-2.7 1.125Zm13.65 0q-1.6 0-2.725-1.125T27 36.8q0-1.6 1.125-2.7T30.85 33q1.55 0 2.675 1.1 1.125 1.1 1.125 2.7t-1.125 2.725Q32.4 40.65 30.85 40.65ZM17.2 27.8q-1.6 0-2.725-1.125T13.35 24q0-1.6 1.125-2.7t2.725-1.1q1.6 0 2.7 1.1T21 24q0 1.55-1.1 2.675-1.1 1.125-2.7 1.125Zm13.65 0q-1.6 0-2.725-1.125T27 24q0-1.6 1.125-2.7t2.725-1.1q1.55 0 2.675 1.1 1.125 1.1 1.125 2.7 0 1.55-1.125 2.675Q32.4 27.8 30.85 27.8ZM17.2 15q-1.6 0-2.725-1.125T13.35 11.15q0-1.55 1.125-2.675Q15.6 7.35 17.2 7.35t2.7 1.125Q21 9.6 21 11.15q0 1.6-1.1 2.725T17.2 15Zm13.65 0q-1.6 0-2.725-1.125T27 11.15q0-1.55 1.125-2.675Q29.25 7.35 30.85 7.35q1.55 0 2.675 1.125Q34.65 9.6 34.65 11.15q0 1.6-1.125 2.725T30.85 15Z"/></svg>
             </div>
+
         </div>
-        <div class="finished-container"></div>
+        <div class="finished-container">
+            <div class="arrow-right-container">
+                <svg id="arrow-right" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M19.5 35.15v-22.3L30.7 24Z"/></svg>
+            </div>
+            <div class="completed">Completed</div>
+        </div>
     </div>
 
 </body>

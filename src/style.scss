@@ -1,5 +1,8 @@
+$dark-font-color: #202124;
 $light-gray: #e0e0e0;
 $dark-gray: #5f6368;
+$finished-gray: #707070;
+$hover-color: #f6f7f8;
 $blue: #1a73e8;
 
 body {
@@ -48,10 +51,8 @@ body {
         font-size: 1.05rem;
         margin-top: -3px;
 
-        #arrow-down-icon {
-            fill: $dark-gray;
-            transform: scale(.5);
-            margin: -9px 0 0 -11px;
+        :hover {
+            cursor: pointer;
         }
     }
 
@@ -60,11 +61,6 @@ body {
         justify-content: center;
         align-items: center;
         grid-area: 1 / 2 / 3 / 3;
-        
-        #close-icon {
-            transform: scale(1.1);
-            fill: #5f6368
-        }
     }
 }
 
@@ -76,6 +72,10 @@ body {
     color: $blue;
     border-top: solid #f1f3f4 1px;
     margin-bottom: 10px;
+
+    :hover {
+        cursor: pointer;
+    }
 
     > * {
         margin-top: 7px;
@@ -95,28 +95,13 @@ body {
     }
 }
 
-#add-task-icon, 
-.more-icon, 
-.circle-icon, 
-.star-icon {
-    transform: scale(.4);
-}
-
-.more-icon,  
-.star-icon {
-    fill: $dark-gray;
-}
-
-.circle-icon {
-    align-self: start;
-}
-
 .tasks-container {
     border-bottom: solid #e0e0e0 1px;
     flex-grow: 1;
+    overflow: auto;
 
     :hover {
-        background-color: #f8f9fa;
+        background-color: $hover-color;
     }
 }
 
@@ -124,6 +109,7 @@ body {
     display: flex;
     flex-direction: column;
     padding: 5px 0 5px 0;
+    transition: all .2s linear;
 
     .task-main {
         display: flex;
@@ -162,7 +148,7 @@ body {
         .task-content {
             width: 172px;
             margin: 0 0 0 6px;
-            color: #202124;
+            color: $dark-font-color;
             word-wrap: break-word;
             font-size: .84rem;
             letter-spacing: .02rem;
@@ -170,12 +156,12 @@ body {
         }
 
         .more-icon {
-
+            display: none;
             margin-right: -12px;
         }
 
         .star-icon {
-
+            display: none;
             margin-right: 2px;
         }
     }
@@ -192,6 +178,7 @@ body {
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
         height: 24px;
         width: 110px;
         font-size: .77rem;
@@ -199,9 +186,116 @@ body {
         border: solid 1px $light-gray;
         border-radius: 15px;
         margin: 7px 0 0 52px;
+        cursor: pointer;
+    }
+
+    .time-picker {
+        display: none;
+    }
+
+    .drag-icon {
+        display: none;
+    }
+}
+
+.task.task-clicked {
+    background-color: $hover-color;
+    position: relative;
+
+    .task-details {
+        margin-top: 6px;
+    }
+
+    .task-date {
+        margin-top: 9px;
+        border: none;
+        color: $dark-font-color;
+        font-size: 0.73rem;
+        border: solid 1px $light-gray;
+
+        &:hover {
+            background-color: #f0f2f3;
+        }
+    }
+
+    .time-picker {
+        position: absolute;
+        right: 10px;
+        bottom: -7px;
+        display: block;
+        visibility: hidden;
+        width: 20px;
+    }
+
+    .drag-icon {
+        position: absolute;
+        top: 18px;
+        left: -14px;
+        display: block;
+        fill: #c7c7c7;
+        transform: scale(.4);
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+        }
     }
 }
 
 .finished-container {
+    display: flex;
+    align-items: center;
     height: 41px;
+    width: 300px;
+    cursor: pointer;
+
+    .arrow-right-container {
+        position: relative;
+        height: 41px;
+    }
+
+    #arrow-right {
+        position: absolute;
+        top: -4px;
+        fill: $finished-gray;
+        transform: scale(.45);
+    }
+
+    .completed {
+        color: $finished-gray;
+        margin: 0 0 1px 48px;
+        font-size: .9rem;
+        letter-spacing: .03rem;
+    }
+}
+
+#add-task-icon, 
+.more-icon, 
+.circle-icon, 
+.star-icon {
+    transform: scale(.4);
+}
+
+.more-icon,  
+.star-icon {
+    fill: $dark-gray;
+}
+
+#close-icon {
+    transform: scale(1.1);
+    fill: #5f6368
+}
+
+.circle-icon {
+    align-self: start;
+}
+
+#arrow-down-icon {
+    fill: $dark-gray;
+    transform: scale(.5);
+    margin: -9px 0 0 -11px;
+}
+
+svg, img {
+    cursor: pointer;
 }
