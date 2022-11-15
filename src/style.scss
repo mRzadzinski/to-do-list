@@ -5,6 +5,21 @@ $finished-gray: #707070;
 $hover-color: #f6f7f8;
 $blue: #1a73e8;
 
+@mixin date-nofocus-style {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 24px;
+    width: 150px;
+    font-size: .77rem;
+    color: $blue;
+    border: solid 1px $light-gray;
+    border-radius: 15px;
+    margin: 7px 0 0 52px;
+    cursor: pointer;
+}
+
 body {
     display: flex;
     justify-content: end;
@@ -27,7 +42,7 @@ body {
 
 .list-name-container {
     display: grid;
-    grid-template: 1fr 1fr / 1fr 40px;
+    grid-template-rows: 1fr 1fr;
     height: 63px;
     padding: 0 6px 0 16px;
 
@@ -54,13 +69,6 @@ body {
         :hover {
             cursor: pointer;
         }
-    }
-
-    #close-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        grid-area: 1 / 2 / 3 / 3;
     }
 }
 
@@ -109,7 +117,11 @@ body {
     display: flex;
     flex-direction: column;
     padding: 5px 0 5px 0;
-    transition: all .2s linear;
+
+    .task-value,
+    .details-value {
+        display: block;
+    }
 
     .task-main {
         display: flex;
@@ -152,7 +164,7 @@ body {
             word-wrap: break-word;
             font-size: .84rem;
             letter-spacing: .02rem;
-            line-height: 1.3rem;
+            line-height: 1.1rem;
         }
 
         .more-icon {
@@ -167,20 +179,23 @@ body {
     }
 
     .task-details {
-        margin: 0 0 0 52px;
+        margin: 7px 0 0 52px;
         color: $dark-gray;
         font-size: .73rem;
         font-weight: 300;
         letter-spacing: .02rem;
+        overflow-wrap: anywhere;
+        width: 140px;      
     }
 
     .task-date {
+        display: block;
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
-        height: 24px;
-        width: 110px;
+        min-height: 24px;
+        width: 140px;
         font-size: .77rem;
         color: $blue;
         border: solid 1px $light-gray;
@@ -189,18 +204,48 @@ body {
         cursor: pointer;
     }
 
-    .time-picker {
-        display: none;
-    }
-
     .drag-icon {
         display: none;
     }
 }
 
-.task.task-clicked {
+.time-picker {
+    position: absolute;
+    right: 10px;
+    bottom: -7px;
+    display: block;
+    visibility: hidden;
+    width: 20px;
+}
+
+textarea {
+    display: none;
+}
+
+.task-clicked {
     background-color: $hover-color;
     position: relative;
+
+    .task-value,
+    .details-value {
+        display: none;
+    }
+
+    textarea {
+        display: block;
+        outline: none;
+        border: 0;
+        font-family: inherit;
+        resize: none;
+        background-color: $hover-color;
+    }
+
+    .task-details textarea {
+        color: $dark-gray;
+        font-size: .73rem;
+        font-weight: 300;
+        letter-spacing: .02rem;
+    }
 
     .task-details {
         margin-top: 6px;
@@ -218,18 +263,9 @@ body {
         }
     }
 
-    .time-picker {
-        position: absolute;
-        right: 10px;
-        bottom: -7px;
-        display: block;
-        visibility: hidden;
-        width: 20px;
-    }
-
     .drag-icon {
         position: absolute;
-        top: 18px;
+        top: 22px;
         left: -14px;
         display: block;
         fill: #c7c7c7;
@@ -281,11 +317,6 @@ body {
     fill: $dark-gray;
 }
 
-#close-icon {
-    transform: scale(1.1);
-    fill: #5f6368
-}
-
 .circle-icon {
     align-self: start;
 }
@@ -298,4 +329,8 @@ body {
 
 svg, img {
     cursor: pointer;
+}
+
+.task-date.hidden {
+    display: none;
 }
