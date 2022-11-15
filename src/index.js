@@ -103,11 +103,12 @@ document.addEventListener('DOMContentLoaded', (e) => {
         let lastTask = this.parentNode.lastChild;
         this.style.opacity = '1';
 
+        console.log(this)
+
         // Move task to an end when dropping item outside of droppable area
         if (dragSrcEl !== lastTask && lastTask.classList.contains('dragover-bottom')) {
             lastTask.after(dragSrcEl);
         }
-
         allTasks.forEach(task => task.classList.remove('dragover-top', 'dragover-bottom'));
     }
 
