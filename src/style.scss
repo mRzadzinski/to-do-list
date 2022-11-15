@@ -110,6 +110,13 @@ body {
 
     :hover {
         background-color: $hover-color;
+
+        .more-icon {
+            display: block;
+        }
+        .star-icon {
+            display: block;
+        }
     }
 }
 
@@ -166,16 +173,16 @@ body {
             letter-spacing: .02rem;
             line-height: 1.1rem;
         }
+    }
 
-        .more-icon {
-            display: none;
-            margin-right: -12px;
-        }
+    .more-icon {
+        display: none;
+        margin-right: -12px;
+    }
 
-        .star-icon {
-            display: none;
-            margin-right: 2px;
-        }
+    .star-icon {
+        display: none;
+        margin-right: 2px;
     }
 
     .task-details {
@@ -225,6 +232,14 @@ textarea {
 .task-clicked {
     background-color: $hover-color;
     position: relative;
+
+    .more-icon {
+        display: block;
+    }
+
+    .star-icon {
+        display: block;
+    }
 
     .task-value,
     .details-value {
@@ -333,4 +348,12 @@ svg, img {
 
 .task-date.hidden {
     display: none;
+}
+
+.dragover-top {
+    border-top: $dark-gray solid 2px;
+}
+
+.dragover-bottom {
+    border-bottom: $dark-gray solid 2px;
 }
