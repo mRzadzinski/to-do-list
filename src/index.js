@@ -4,14 +4,20 @@ import parseISO from 'date-fns/parseISO';
 
 // DOM manipulation section
 
+const listName = document.querySelector('#list-name');
 const allTasks = document.querySelectorAll('.task');
 const timePickers = document.querySelectorAll('.time-picker');
 const taskDateDivs = document.querySelectorAll('.task-date');
 const dateValues = document.querySelectorAll('.date-value');
 const completedButton = document.querySelector('.completed-button');
 const completedList = document.querySelector('.completed-list');
+const arrowRight = document.querySelector('#arrow-right');
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
+
+// Dropdown taks list
+
+
 
 // Date picker
 let currentPicker;
@@ -84,6 +90,8 @@ document.addEventListener('click', (e) => {
         if (task.contains(e.target) && !task.classList.contains('completed')) {
             task.classList.add('task-clicked');
         } else {
+            // task.style.maxHeight = '0';
+            task.style.removeProperty('height');
             task.classList.remove('task-clicked');
         }
         toggleDate();
@@ -97,8 +105,10 @@ completedButton.onclick = () => {
         completedList.style.display = 'block';
         completedList.style.maxHeight = completedList.scrollHeight + "px";
         completedList.classList.add('active');
+        arrowRight.style.transform = 'scale(.45) rotate(90deg)';
     } else {
         completedList.classList.remove('active');
+        arrowRight.style.transform = 'scale(.45)';
         completedList.style.maxHeight = '0';
         setTimeout(() => completedList.style.display = 'none', 200);
     }

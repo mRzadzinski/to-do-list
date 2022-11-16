@@ -35,6 +35,7 @@ body {
 .container {
     display: flex;
     flex-direction: column;
+    position: relative;
     width: 300px;
     height: 100vh;
     box-shadow: -1px 0px 5px rgb(194, 194, 194);
@@ -114,17 +115,13 @@ body {
         .more-icon {
             display: block;
         }
-        .star-icon {
-            display: block;
-        }
     }
 }
 
 .task {
     display: flex;
     flex-direction: column;
-    padding: 5px 0 5px 0;
-    transition: max-height 0.2s ease-out;
+    padding: 11px 0 5px 0;
 
     .task-value,
     .details-value {
@@ -146,23 +143,10 @@ body {
             top: -15px;
         }
 
-        .task-icon-container {
-            position: relative;
-            height: 20px;
-            width: 20px;
-        }
-
         .more-icon {
             position: absolute;
             top: -14px;
-            right: -10px;
-        } 
-
-        .star-icon {
-            position: absolute;
-            top: -15px;
-            left: 8px;
-
+            right: -44px;
         } 
 
         .task-content {
@@ -208,7 +192,7 @@ body {
         color: $blue;
         border: solid 1px $light-gray;
         border-radius: 15px;
-        margin: 7px 0 0 52px;
+        margin: 7px 0 10px 52px;
         cursor: pointer;
     }
 
@@ -235,10 +219,6 @@ textarea {
     position: relative;
 
     .more-icon {
-        display: block;
-    }
-
-    .star-icon {
         display: block;
     }
 
@@ -276,20 +256,6 @@ textarea {
 
         &:hover {
             background-color: #f0f2f3;
-        }
-    }
-
-    .drag-icon {
-        position: absolute;
-        top: 22px;
-        left: -14px;
-        display: block;
-        fill: #c7c7c7;
-        transform: scale(.4);
-        cursor: grab;
-
-        &:active {
-            cursor: grabbing;
         }
     }
 }
@@ -338,11 +304,48 @@ textarea {
     }
 }
 
+.dropdown {
+    position: absolute;
+    top: 62px;
+    z-index: 1;
+    padding: 11px 0 11px 0;
+    width: 243px;
+    border-radius: 4px;
+    font-size: .87rem;
+    font-weight: 300;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 10px;
+    color: $dark-font-color;
+    background-color: wheat;
+    cursor: pointer;
+}
+
+.dropdown-element {
+    padding: 0 64px 0 42px;
+}
+
+.with-icon {
+    display: flex;
+    position: relative;
+}
+
+.break-line {
+    width: 243px;
+    height: 0;
+    border-top: 1px solid rgb(197, 197, 197);
+    margin: 10px 0 10px 0;
+}
+
+.task-icon-container {
+    position: relative;
+    height: 20px;
+    width: 20px;
+}
+
 #add-task-icon, 
 .more-icon, 
 .circle-icon, 
-.star-icon, 
-.trash-icon {
+.trash-icon,
+.plus-icon {
     transform: scale(.4);
 }
 
@@ -350,8 +353,7 @@ textarea {
     transform: scale(.5);
 }
 
-.more-icon,  
-.star-icon,
+.more-icon,
 .trash-icon,
 .check-icon {
     fill: $dark-gray;
@@ -369,6 +371,12 @@ textarea {
 
 .trash-icon {
     right: -55px;
+}
+
+.plus-icon {
+    position: absolute;
+    top: -16px;
+    left: 0px;
 }
 
 #arrow-down-icon {
