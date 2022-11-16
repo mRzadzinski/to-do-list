@@ -8,6 +8,8 @@ const allTasks = document.querySelectorAll('.task');
 const timePickers = document.querySelectorAll('.time-picker');
 const taskDateDivs = document.querySelectorAll('.task-date');
 const dateValues = document.querySelectorAll('.date-value');
+const completedButton = document.querySelector('.completed-button');
+const completedList = document.querySelector('.completed-list');
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
 
@@ -79,7 +81,7 @@ function updateTextareas() {
 // Expand clicked task
 document.addEventListener('click', (e) => {
     allTasks.forEach(task => {
-        if (task.contains(e.target)) {
+        if (task.contains(e.target) && !task.classList.contains('completed')) {
             task.classList.add('task-clicked');
         } else {
             task.classList.remove('task-clicked');
@@ -87,6 +89,20 @@ document.addEventListener('click', (e) => {
         toggleDate();
     });
 });
+
+// Expand completed list
+
+completedButton.onclick = () => {
+    if (!completedList.classList.contains('active')) {
+        completedList.style.display = 'block';
+        completedList.style.maxHeight = completedList.scrollHeight + "px";
+        completedList.classList.add('active');
+    } else {
+        completedList.classList.remove('active');
+        completedList.style.maxHeight = '0';
+        setTimeout(() => completedList.style.display = 'none', 200);
+    }
+};
 
 // Drag & drop
 let dragoverTarget;
@@ -102,8 +118,6 @@ document.addEventListener('DOMContentLoaded', (e) => {
     function handleDragEnd(e) {
         let lastTask = this.parentNode.lastChild;
         this.style.opacity = '1';
-
-        console.log(this)
 
         // Move task to an end when dropping item outside of droppable area
         if (dragSrcEl !== lastTask && lastTask.classList.contains('dragover-bottom')) {
@@ -132,9 +146,10 @@ document.addEventListener('DOMContentLoaded', (e) => {
     }
 
     function handleDrop(e) {
+        let lastTask = this.parentNode.lastChild;
         e.stopPropagation();
 
-        if (dragSrcEl !== this && !this.parentNode.lastChild.classList.contains('dragover-bottom')) {
+        if (dragSrcEl !== this && !lastTask.classList.contains('dragover-bottom')) {
             this.before(dragSrcEl);
         }
         return false;

@@ -124,6 +124,7 @@ body {
     display: flex;
     flex-direction: column;
     padding: 5px 0 5px 0;
+    transition: max-height 0.2s ease-out;
 
     .task-value,
     .details-value {
@@ -293,7 +294,7 @@ textarea {
     }
 }
 
-.finished-container {
+.completed-button {
     display: flex;
     align-items: center;
     height: 41px;
@@ -312,7 +313,7 @@ textarea {
         transform: scale(.45);
     }
 
-    .completed {
+    #completed {
         color: $finished-gray;
         margin: 0 0 1px 48px;
         font-size: .9rem;
@@ -320,20 +321,54 @@ textarea {
     }
 }
 
+.completed-list {
+    display: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    margin-bottom: 4px;
+    text-decoration: line-through;
+    
+    .task-details {
+        margin-top: 0px;
+    }
+
+    :hover {
+        background-color: $hover-color;
+    }
+}
+
 #add-task-icon, 
 .more-icon, 
 .circle-icon, 
-.star-icon {
+.star-icon, 
+.trash-icon {
     transform: scale(.4);
 }
 
+.check-icon {
+    transform: scale(.5);
+}
+
 .more-icon,  
-.star-icon {
+.star-icon,
+.trash-icon,
+.check-icon {
     fill: $dark-gray;
 }
 
 .circle-icon {
     align-self: start;
+}
+
+.check-icon,
+.trash-icon {
+    position: absolute;
+    top: -15px;
+}
+
+.trash-icon {
+    right: -55px;
 }
 
 #arrow-down-icon {
