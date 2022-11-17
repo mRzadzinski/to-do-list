@@ -5,6 +5,9 @@ import parseISO from 'date-fns/parseISO';
 // DOM manipulation section
 
 const listName = document.querySelector('#list-name');
+const dropdowns = document.querySelectorAll('.dropdown');
+const taskMenu = document.querySelector('.dropdown-task-menu');
+const taskMenuButtons = document.querySelectorAll('.task-menu-button');
 const allTasks = document.querySelectorAll('.task');
 const timePickers = document.querySelectorAll('.time-picker');
 const taskDateDivs = document.querySelectorAll('.task-date');
@@ -12,12 +15,9 @@ const dateValues = document.querySelectorAll('.date-value');
 const completedButton = document.querySelector('.completed-button');
 const completedList = document.querySelector('.completed-list');
 const arrowRight = document.querySelector('#arrow-right');
+const mainMenuBtn = document.querySelector('#main-menu-btn');
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
-
-// Dropdown taks list
-
-
 
 // Date picker
 let currentPicker;
@@ -84,35 +84,77 @@ function updateTextareas() {
     this.style.height = (this.scrollHeight) + "px";
 }
 
-// Expand clicked task
+// Expand clicked task with transition animation
 document.addEventListener('click', (e) => {
     allTasks.forEach(task => {
-        if (task.contains(e.target) && !task.classList.contains('completed')) {
+        if (task.contains(e.target) && !task.classList.contains('completed') 
+        && !e.target.classList.contains('more-icon')) {
             task.classList.add('task-clicked');
         } else {
-            // task.style.maxHeight = '0';
-            task.style.removeProperty('height');
             task.classList.remove('task-clicked');
         }
         toggleDate();
     });
 });
 
-// Expand completed list
+// Position task menu
+let lastTaskButton;
+taskMenuButtons.forEach(button => button.addEventListener('click', (event) => {
+    lastTaskButton = button; 
+    taskMenu.style.top = lastTaskButton.getBoundingClientRect().y + 'px';
+    expandElement(taskMenu, event);
+}));
 
-completedButton.onclick = () => {
-    if (!completedList.classList.contains('active')) {
-        completedList.style.display = 'block';
-        completedList.style.maxHeight = completedList.scrollHeight + "px";
-        completedList.classList.add('active');
-        arrowRight.style.transform = 'scale(.45) rotate(90deg)';
-    } else {
-        completedList.classList.remove('active');
-        arrowRight.style.transform = 'scale(.45)';
-        completedList.style.maxHeight = '0';
-        setTimeout(() => completedList.style.display = 'none', 200);
+
+
+
+
+
+// Expand list
+function chooseDropdown(className) {
+    for (let i = 0; i < dropdowns.length; i++) {
+        if (dropdowns[i].classList.contains(className)) return dropdowns[i];
     }
+}
+
+listName.onclick = (event) => expandElement(chooseDropdown('dropdown-task-list'), event);
+mainMenuBtn.onclick = (event) => expandElement(chooseDropdown('dropdown-menu'), event);
+document.onclick = (event) => {
+    dropdowns.forEach(dropdown => {
+        if (dropdown.classList.contains('active')) {
+            if (!listName.contains(event.target) && dropdown.classList.contains('dropdown-task-list')) {
+                expandElement(dropdown);
+            } else if (!mainMenuBtn.contains(event.target) && dropdown.classList.contains('dropdown-menu')) {
+                expandElement(dropdown);
+            } else if (!lastTaskButton.contains(event.target) && dropdown.classList.contains('dropdown-task-menu')) {
+                expandElement(dropdown);
+            }
+        }
+    });
 };
+
+completedButton.onclick = () => expandElement(completedList);
+
+function expandElement(element, event) {
+    // Handle expand/collapse task menu
+    if (!element.classList.contains('active')) {
+        element.style.zIndex = '2';
+        element.style.display = 'block';
+        element.style.maxHeight = element.scrollHeight + "px";
+        element.classList.add('active');
+        if (element.classList.contains('completed-list')) {
+            arrowRight.style.transform = 'scale(.45) rotate(90deg)';
+        }
+    } else {
+        element.style.zIndex = '1';
+        element.classList.remove('active');
+        element.style.maxHeight = '0';
+        element.style.display = 'none';
+        if (element.classList.contains('completed-list')) {
+            arrowRight.style.transform = 'scale(.45)';
+        }
+    }
+}
 
 // Drag & drop
 let dragoverTarget;

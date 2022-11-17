@@ -113,7 +113,7 @@ body {
         background-color: $hover-color;
 
         .more-icon {
-            display: block;
+            visibility: visible;
         }
     }
 }
@@ -122,6 +122,7 @@ body {
     display: flex;
     flex-direction: column;
     padding: 11px 0 5px 0;
+    overflow: hidden;
 
     .task-value,
     .details-value {
@@ -161,17 +162,12 @@ body {
     }
 
     .more-icon {
-        display: none;
+        visibility: visible;
         margin-right: -12px;
     }
 
-    .star-icon {
-        display: none;
-        margin-right: 2px;
-    }
-
     .task-details {
-        margin: 7px 0 0 52px;
+        margin: 2px 0 0 52px;
         color: $dark-gray;
         font-size: .73rem;
         font-weight: 300;
@@ -302,26 +298,77 @@ textarea {
     :hover {
         background-color: $hover-color;
     }
+
+    .trash-icon {
+        right: -55px;
+    }
 }
 
 .dropdown {
+    display: none;
+    max-height: 0;
     position: absolute;
-    top: 62px;
     z-index: 1;
-    padding: 11px 0 11px 0;
+    padding: 9px 0 9px 0;
     width: 243px;
     border-radius: 4px;
     font-size: .87rem;
-    font-weight: 300;
+    font-weight: 400;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 10px;
     color: $dark-font-color;
-    background-color: wheat;
+    background-color: white;
+    transition: max-height 0.2s ease-out;
+    overflow: hidden;
     cursor: pointer;
+
+    :hover {
+        background-color: $hover-color;
+    }
+}
+
+.dropdown.dropdown-task-list {
+    top: 62px;
+}
+
+.dropdown.dropdown-menu {
+    top: 105px;
+    right: 15px;
+    z-index: 1;
+}
+
+.dropdown.dropdown-task-menu {
+    // display: block;
+    // max-height: fit-content;
+    width: 192px;
+    left: 65px;
+
+    .trash-icon {
+        left: 0px;
+        top: -7px;
+    }
+}
+
+.dropdown-header {
+    font-size: .8rem;
+    font-weight: 400;
+    color: #80868b;
+    margin: 9px 0 5px 20px;
 }
 
 .dropdown-element {
-    padding: 0 64px 0 42px;
+    padding: 9px 20px 9px 20px;
 }
+
+.dropdown-element.with-icon {
+    padding: 9px 20px 9px 42px;
+
+    .check-icon {
+        top: -7px;
+        left: 1px;
+    }
+}
+
+
 
 .with-icon {
     display: flex;
@@ -332,7 +379,7 @@ textarea {
     width: 243px;
     height: 0;
     border-top: 1px solid rgb(197, 197, 197);
-    margin: 10px 0 10px 0;
+    margin: 9px 0 9px 0;
 }
 
 .task-icon-container {
@@ -369,13 +416,9 @@ textarea {
     top: -15px;
 }
 
-.trash-icon {
-    right: -55px;
-}
-
 .plus-icon {
     position: absolute;
-    top: -16px;
+    top: -7px;
     left: 0px;
 }
 
