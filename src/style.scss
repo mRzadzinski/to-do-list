@@ -139,6 +139,21 @@ body {
             height: 20px;
         }
 
+        .circle-container:hover {
+
+            .circle-icon {
+                display: none;
+            }
+
+            .check-icon {
+                display: block;
+            }
+        }
+
+        .check-icon {
+            display: none;
+        }
+
         .circle-icon {
             position: absolute;
             top: -15px;
@@ -404,10 +419,6 @@ textarea {
 .trash-icon,
 .check-icon {
     fill: $dark-gray;
-}
-
-.circle-icon {
-    align-self: start;
 }
 
 .check-icon,

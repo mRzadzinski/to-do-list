@@ -84,19 +84,6 @@ function updateTextareas() {
     this.style.height = (this.scrollHeight) + "px";
 }
 
-// Expand clicked task with transition animation
-document.addEventListener('click', (e) => {
-    allTasks.forEach(task => {
-        if (task.contains(e.target) && !task.classList.contains('completed') 
-        && !e.target.classList.contains('more-icon')) {
-            task.classList.add('task-clicked');
-        } else {
-            task.classList.remove('task-clicked');
-        }
-        toggleDate();
-    });
-});
-
 // Position task menu
 let lastTaskButton;
 taskMenuButtons.forEach(button => button.addEventListener('click', (event) => {
@@ -104,11 +91,6 @@ taskMenuButtons.forEach(button => button.addEventListener('click', (event) => {
     taskMenu.style.top = lastTaskButton.getBoundingClientRect().y + 'px';
     expandElement(taskMenu, event);
 }));
-
-
-
-
-
 
 // Expand list
 function chooseDropdown(className) {
@@ -126,7 +108,8 @@ document.onclick = (event) => {
                 expandElement(dropdown);
             } else if (!mainMenuBtn.contains(event.target) && dropdown.classList.contains('dropdown-menu')) {
                 expandElement(dropdown);
-            } else if (!lastTaskButton.contains(event.target) && dropdown.classList.contains('dropdown-task-menu')) {
+            } else if (lastTaskButton && !lastTaskButton.contains(event.target) 
+            && dropdown.classList.contains('dropdown-task-menu')) {
                 expandElement(dropdown);
             }
         }
@@ -137,11 +120,15 @@ completedButton.onclick = () => expandElement(completedList);
 
 function expandElement(element, event) {
     // Handle expand/collapse task menu
-    if (!element.classList.contains('active')) {
+    if (event && element.classList.contains('active')) {
+
+        console.log('yes')
+    } else if (!element.classList.contains('active')) {
         element.style.zIndex = '2';
         element.style.display = 'block';
         element.style.maxHeight = element.scrollHeight + "px";
         element.classList.add('active');
+        // Handle finished list arrow position
         if (element.classList.contains('completed-list')) {
             arrowRight.style.transform = 'scale(.45) rotate(90deg)';
         }
@@ -150,11 +137,25 @@ function expandElement(element, event) {
         element.classList.remove('active');
         element.style.maxHeight = '0';
         element.style.display = 'none';
+                // Handle finished list arrow position
         if (element.classList.contains('completed-list')) {
             arrowRight.style.transform = 'scale(.45)';
         }
     }
 }
+
+// Expand clicked task
+document.addEventListener('click', (e) => {
+    allTasks.forEach(task => {
+        if (task.contains(e.target) && !task.classList.contains('completed') 
+        && !e.target.classList.contains('more-icon')) {
+            task.classList.add('task-clicked');
+        } else {
+            task.classList.remove('task-clicked');
+        }
+        toggleDate();
+    });
+});
 
 // Drag & drop
 let dragoverTarget;
