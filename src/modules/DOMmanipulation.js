@@ -29,6 +29,7 @@ const dateTimeHandler = (() => {
     });
         
     function convertDate() {
+        console.log(currentPicker.value)
         let dateTimeArray = parseISO(currentPicker.value).toString().split(' ');
         let time = new Date(currentPicker.value).toLocaleTimeString('en', {
             timeStyle: 'short', 
@@ -226,5 +227,5 @@ const dragAndDropHandler = (() => {
         }
         return false;
     }
-    
+
 })();
