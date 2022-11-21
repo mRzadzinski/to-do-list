@@ -319,8 +319,11 @@ function renderTasks(currentList) {
 
             // Fill task data
             newTask.children[0].children[1].children[0].innerHTML = currentList[prop].name;
+            newTask.children[0].children[1].children[0].nextElementSibling.value = currentList[prop].name;
+
             newTask.children[1].children[0].innerHTML = currentList[prop].details;
-            console.log(currentList[prop].dateTime)
+            newTask.children[1].children[0].nextElementSibling.value = currentList[prop].details;
+
             if (currentList[prop].dateTime) {
                 let datePicker = newTask.children[2].children[1];
                 let date = currentList[prop].dateTime;
