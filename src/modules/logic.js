@@ -37,8 +37,6 @@ week.work = work;
 week.hurry = hurry;
 week.cry = cry;
 
-console.log(taskLists)
-
 function updateTasksPosition(plusOrMin) {
     for (const prop in currentList) {
         if (prop && typeof currentList[prop] == 'object') {
@@ -49,10 +47,6 @@ function updateTasksPosition(plusOrMin) {
             }
         }
     }
-}
-
-function createTaskData() {
-
 }
 
 export { updateTasksPosition, currentList, taskLists };

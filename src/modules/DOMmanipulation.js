@@ -25,23 +25,22 @@ const dateTimeHandler = (() => {
                     }
                 })
             });
-            div.addEventListener('change', convertDate);
+            div.addEventListener('change', () => convertDate(currentPicker.value, currentDateValue));
             div.addEventListener('change', toggleDate);
         });
     }
 
-    function convertDate() {
-        console.log(currentPicker.value)
-        let dateTimeArray = parseISO(currentPicker.value).toString().split(' ');
-        let time = new Date(currentPicker.value).toLocaleTimeString('en', {
+    function convertDate(date, destination) {
+        let dateTimeArray = parseISO(date).toString().split(' ');
+        let time = new Date(date).toLocaleTimeString('en', {
             timeStyle: 'short', 
             hour12: true
         });
         let dateTime = `${dateTimeArray[0]}, ${dateTimeArray[1]} ${dateTimeArray[2]}, ${time}`;
         if (dateTime.includes('Invalid')) {
-            currentDateValue.innerHTML = 'Date / time';
+            destination.innerHTML = 'Date / time';
         } else {
-            currentDateValue.innerHTML = dateTime;
+            destination.innerHTML = dateTime;
         }
     }
 
@@ -60,7 +59,7 @@ const dateTimeHandler = (() => {
     }
 
     return {
-        toggleDate, addDateListeners
+        addDateListeners, toggleDate, convertDate
     };
 
 })();
@@ -267,7 +266,36 @@ function addTaskListeners() {
     dragAndDropHandler.addDragDropListeners();
 }
 
-// Create new task
+const listNameTemplate = document.querySelector('.list-text-template');
+const dropdownTaskList = document.querySelector('#prepend-with-list');
+const taskListHeader = document.querySelector('#list-name-text');
+
+function renderTaskLists(taskLists, currentList) {
+    let lastRenderedList;
+    // Render default list
+    if (!taskLists[0]) {
+        taskLists.push({ name: 'Quests' });
+        lastRenderedList = taskLists[0];
+        currentList = taskLists[0];
+        console.log(currentList)
+    }
+    // Render list
+    if (!lastRenderedList) lastRenderedList = currentList;
+    taskLists.forEach(list => {
+        let newList = listNameTemplate.cloneNode(true);
+        newList.classList.remove('list-text-template');
+        dropdownTaskList.before(newList);
+        newList.lastChild.innerHTML = list.name;
+        lastRenderedList = newList;
+    });
+    renderTaskListHeader(currentList);
+}
+
+// Render task list header
+function renderTaskListHeader(currentList) {
+    taskListHeader.innerHTML = currentList.name;
+}
+
 const tasksContainer = document.querySelector('.tasks-container');
 const taskTemplate = document.querySelector('.task-template');
 
@@ -280,17 +308,31 @@ function createTaskHTML() {
     return newTask;
 }
 
-const listNameTemplate = document.querySelector('.list-text-template');
-const dropdownTaskList = document.querySelector('.dropdown-task-list');
+function renderTasks(currentList) {
+    for (const prop in currentList) {
+        if (!prop) break;
+        if (prop && typeof currentList[prop] === 'object') {
+            // Add new task
+            let newTask = taskTemplate.cloneNode(true);
+            newTask.classList.remove('task-template');
+            tasksContainer.append(newTask);
 
-function renderTaskListsHTML(taskLists) {
-    taskLists.forEach(list => {
-        console.log(list.name)
-        let newList = listNameTemplate.cloneNode(true);
-        newList.classList.remove('list-text-template');
-        dropdownTaskList.prepend(newList);
-        newList.lastChild.innerHTML = list.name;
-    });
+            // Fill task data
+            newTask.children[0].children[1].children[0].innerHTML = currentList[prop].name;
+            newTask.children[1].children[0].innerHTML = currentList[prop].details;
+            console.log(currentList[prop].dateTime)
+            if (currentList[prop].dateTime) {
+                let datePicker = newTask.children[2].children[1];
+                let date = currentList[prop].dateTime;
+                let destination = datePicker.previousElementSibling;
+
+                datePicker.setAttribute('value', date);
+                dateTimeHandler.convertDate(date, destination);
+                dateTimeHandler.toggleDate();
+            }            
+        }
+    }
+    addTaskListeners();
 }
 
-export { createTaskHTML, addTaskListeners, renderTaskListsHTML };
+export { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks };
