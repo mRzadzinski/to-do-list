@@ -212,6 +212,10 @@ body {
     }
 }
 
+.task-template {
+    display: none;
+}
+
 .time-picker {
     position: absolute;
     right: 10px;
@@ -381,9 +385,11 @@ textarea {
         top: -7px;
         left: 1px;
     }
+
+    &.list-text-template {
+        display: none;
+    }
 }
-
-
 
 .with-icon {
     display: flex;
@@ -425,6 +431,10 @@ textarea {
 .trash-icon {
     position: absolute;
     top: -15px;
+}
+
+.check-icon.hidden {
+    display: none;
 }
 
 .plus-icon {

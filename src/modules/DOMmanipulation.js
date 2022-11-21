@@ -1,33 +1,35 @@
 import circleIcon from '../img/circle-icon.png';
 import parseISO from 'date-fns/parseISO';
 
-const allTasks = document.querySelectorAll('.task');
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
 
 
 
 const dateTimeHandler = (() => {
-    const timePickers = document.querySelectorAll('.time-picker');
-    const taskDateDivs = document.querySelectorAll('.task-date');
-    const dateValues = document.querySelectorAll('.date-value');
     let currentPicker;
     let currentDateValue;
     
-    taskDateDivs.forEach(div => {
-        div.addEventListener('click', () => {
-            timePickers.forEach(picker => {
-                if (div.contains(picker)) {
-                    picker.showPicker();
-                    currentPicker = picker;
-                    currentDateValue = currentPicker.previousElementSibling;
-                }
-            })
+    addDateListeners();
+    function addDateListeners() {
+        const timePickers = document.querySelectorAll('.time-picker');
+        const taskDateDivs = document.querySelectorAll('.task-date');
+
+        taskDateDivs.forEach(div => {
+            div.addEventListener('click', () => {
+                timePickers.forEach(picker => {
+                    if (div.contains(picker)) {
+                        picker.showPicker();
+                        currentPicker = picker;
+                        currentDateValue = currentPicker.previousElementSibling;
+                    }
+                })
+            });
+            div.addEventListener('change', convertDate);
+            div.addEventListener('change', toggleDate);
         });
-        div.addEventListener('change', convertDate);
-        div.addEventListener('change', toggleDate);
-    });
-        
+    }
+
     function convertDate() {
         console.log(currentPicker.value)
         let dateTimeArray = parseISO(currentPicker.value).toString().split(' ');
@@ -45,6 +47,8 @@ const dateTimeHandler = (() => {
 
     toggleDate();
     function toggleDate() {
+        const dateValues = document.querySelectorAll('.date-value');
+
         dateValues.forEach(value => {
             if (value.innerHTML === 'Date / time' 
                 && !value.parentNode.parentNode.classList.contains('task-clicked')) {
@@ -56,7 +60,7 @@ const dateTimeHandler = (() => {
     }
 
     return {
-        toggleDate,
+        toggleDate, addDateListeners
     };
 
 })();
@@ -64,27 +68,34 @@ const dateTimeHandler = (() => {
 
 
 const textInputHandler = (() => {
-    const textAreas = document.getElementsByTagName('textarea');
 
-    for (let i = 0; i < textAreas.length; i++) {
-        let height;
-        if (textAreas[i].scrollHeight == 0) {
-            height = 'auto';
-        } else {
-            height = textAreas[i].scrollHeight;
+    addTextAreasListeners();
+    function addTextAreasListeners() {
+        const textAreas = document.getElementsByTagName('textarea');
+
+        for (let i = 0; i < textAreas.length; i++) {
+            let height;
+    
+            if (textAreas[i].scrollHeight == 0) {
+                height = 'auto';
+            } else {
+                height = textAreas[i].scrollHeight;
+            }
+            textAreas[i].setAttribute('style', 'height:' + height + 'px;overflow-y:hidden;');
+            textAreas[i].addEventListener('input', updateTextAreas);
+            textAreas[i].addEventListener('input', () => {
+                textAreas[i].innerHTML =  textAreas[i].value;
+                textAreas[i].previousElementSibling.innerHTML = textAreas[i].value;
+            });
         }
-        textAreas[i].setAttribute('style', 'height:' + height + 'px;overflow-y:hidden;');
-        textAreas[i].addEventListener('input', updateTextAreas);
-        textAreas[i].addEventListener('input', () => {
-            textAreas[i].innerHTML =  textAreas[i].value;
-            textAreas[i].previousElementSibling.innerHTML = textAreas[i].value;
-        });
     }
+
     function updateTextAreas() {
         this.style.height = 0;
         this.style.height = (this.scrollHeight) + "px";
     }
 
+    return { addTextAreasListeners };
 })();
 
 
@@ -93,7 +104,6 @@ const expandElementHandler = (() => {
     const listNameHeader = document.querySelector('#list-name');
     const dropdowns = document.querySelectorAll('.dropdown');
     const taskMenu = document.querySelector('.dropdown-task-menu');
-    const taskMenuButtons = document.querySelectorAll('.task-menu-button');
     const completedButton = document.querySelector('.completed-button');
     const completedList = document.querySelector('.completed-list');
     const arrowRight = document.querySelector('#arrow-right');
@@ -104,12 +114,18 @@ const expandElementHandler = (() => {
     listNameHeader.onclick = () => expandElement(chooseDropdown('dropdown-task-list'));
     mainMenuBtn.onclick = () => expandElement(chooseDropdown('dropdown-menu'));
     completedButton.onclick = () => expandElement(completedList);
-    taskMenuButtons.forEach(button => button.addEventListener('click', (event) => {
-        lastUsedTaskMenuBtn = button; 
-        // Set task menu position
-        taskMenu.style.top = lastUsedTaskMenuBtn.getBoundingClientRect().y + 'px';
-        expandElement(taskMenu, event);
-    }));
+    addTaskMenuListeners();
+    function addTaskMenuListeners() {
+        const taskMenuButtons = document.querySelectorAll('.task-menu-button');
+
+        taskMenuButtons.forEach(button => button.addEventListener('click', (event) => {
+            lastUsedTaskMenuBtn = button; 
+            // Set task menu position
+            taskMenu.style.top = lastUsedTaskMenuBtn.getBoundingClientRect().y + 'px';
+            expandElement(taskMenu, event);
+        }));
+    }
+
 
     function chooseDropdown(className) {
         for (let i = 0; i < dropdowns.length; i++) {
@@ -157,33 +173,44 @@ const expandElementHandler = (() => {
     };
 
     // Expand / collapse clicked task
-    document.addEventListener('click', (event) => {
-        allTasks.forEach(task => {
-            if (task.contains(event.target) && !task.classList.contains('completed') 
-            && !event.target.classList.contains('more-icon')) {
-                task.classList.add('task-clicked');
-            } else {
-                task.classList.remove('task-clicked');
-            }
-            dateTimeHandler.toggleDate();
-        });
-    });
+    addResizeTaskListener();
+    function addResizeTaskListener() {
+        const allTasks = document.querySelectorAll('.task');
 
+        document.addEventListener('click', (event) => {
+            allTasks.forEach(task => {
+                if (task.contains(event.target) && !task.classList.contains('completed') 
+                && !event.target.classList.contains('more-icon')) {
+                    task.classList.add('task-clicked');
+                } else {
+                    task.classList.remove('task-clicked');
+                }
+                dateTimeHandler.toggleDate();
+            });
+        });
+    }
+
+    return { addTaskMenuListeners, addResizeTaskListener };
 })();
 
 
 const dragAndDropHandler = (() => {
     let dragElement;
-    
-    document.addEventListener('DOMContentLoaded', (e) => {    
-        allTasks.forEach(task => {
-            task.addEventListener('dragstart', handleDragStart);
-            task.addEventListener('dragover', handleDragOver);
-            task.addEventListener('dragleave', handleDragLeave);
-            task.addEventListener('dragend', handleDragEnd);
-            task.addEventListener('drop', handleDrop);
+
+    addDragDropListeners();
+    function addDragDropListeners() {
+        const allTasks = document.querySelectorAll('.task');
+
+        document.addEventListener('DOMContentLoaded', (e) => {    
+            allTasks.forEach(task => {
+                task.addEventListener('dragstart', handleDragStart);
+                task.addEventListener('dragover', handleDragOver);
+                task.addEventListener('dragleave', handleDragLeave);
+                task.addEventListener('dragend', handleDragEnd);
+                task.addEventListener('drop', handleDrop);
+            });
         });
-    });
+    }
 
     function handleDragStart(e) {
         this.style.opacity = '.5'
@@ -215,6 +242,7 @@ const dragAndDropHandler = (() => {
         if (dragElement !== lastTask && lastTask.classList.contains('dragover-bottom-border')) {
             lastTask.after(dragElement);
         }
+        const allTasks = document.querySelectorAll('.task');
         allTasks.forEach(task => task.classList.remove('dragover-top-border', 'dragover-bottom-border'));
     }
 
@@ -228,4 +256,41 @@ const dragAndDropHandler = (() => {
         return false;
     }
 
+    return { addDragDropListeners };
 })();
+
+function addTaskListeners() {
+    dateTimeHandler.addDateListeners();
+    textInputHandler.addTextAreasListeners();
+    expandElementHandler.addTaskMenuListeners();
+    expandElementHandler.addResizeTaskListener()
+    dragAndDropHandler.addDragDropListeners();
+}
+
+// Create new task
+const tasksContainer = document.querySelector('.tasks-container');
+const taskTemplate = document.querySelector('.task-template');
+
+function createTaskHTML() {
+    let newTask = taskTemplate.cloneNode(true);
+    newTask.classList.remove('task-template');
+    tasksContainer.prepend(newTask);
+    addTaskListeners();
+
+    return newTask;
+}
+
+const listNameTemplate = document.querySelector('.list-text-template');
+const dropdownTaskList = document.querySelector('.dropdown-task-list');
+
+function renderTaskListsHTML(taskLists) {
+    taskLists.forEach(list => {
+        console.log(list.name)
+        let newList = listNameTemplate.cloneNode(true);
+        newList.classList.remove('list-text-template');
+        dropdownTaskList.prepend(newList);
+        newList.lastChild.innerHTML = list.name;
+    });
+}
+
+export { createTaskHTML, addTaskListeners, renderTaskListsHTML };
