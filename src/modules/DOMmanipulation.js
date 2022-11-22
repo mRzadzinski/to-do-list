@@ -38,6 +38,17 @@ const dateTimeHandler = (() => {
             hour12: true
         });
         let dateTime = `${dateTimeArray[0]}, ${dateTimeArray[1]} ${dateTimeArray[2]}, ${time}`;
+
+        // Determine which task to update
+        let myTaskPosition = destination.parentNode.parentNode.dataset.position;
+        let myTask;
+        for (const task in currentList) {
+            if (currentList[task].position == myTaskPosition) {
+                myTask = currentList[task];
+            } 
+        }
+        myTask.dateTime = dateTime;
+
         if (dateTime.includes('Invalid')) {
             destination.innerHTML = 'Date / time';
         } else {
@@ -84,7 +95,32 @@ const textInputHandler = (() => {
             textAreas[i].setAttribute('style', 'height:' + height + 'px;overflow-y:hidden;');
             textAreas[i].addEventListener('input', updateTextAreas);
             textAreas[i].addEventListener('input', () => {
-                textAreas[i].innerHTML =  textAreas[i].value;
+                // Determine task position
+                let myTaskPosition;
+                let dataSrc;
+                if (textAreas[i].parentNode.classList.contains('task-content')) {
+                    myTaskPosition = textAreas[i].parentNode.parentNode.parentNode.dataset.position;
+                    dataSrc = 'task-content';
+                } else if (textAreas[i].parentNode.classList.contains('task-details')) {
+                    myTaskPosition = textAreas[i].parentNode.parentNode.dataset.position;
+                    dataSrc = 'task-details';
+                }
+                // Determine which task to update
+                let myTask;
+                for (const task in currentList) {
+                    if (currentList[task].position == myTaskPosition) {
+                        myTask = currentList[task];
+                    } 
+                }
+                // Update task data
+                if (dataSrc === 'task-content') {
+                    myTask.name = textAreas[i].value;
+                } else if (dataSrc === 'task-details') {
+                    myTask.details = textAreas[i].value;
+                }
+
+                // Update HTML
+                textAreas[i].innerHTML = textAreas[i].value;
                 textAreas[i].previousElementSibling.innerHTML = textAreas[i].value;
             });
         }
@@ -97,7 +133,6 @@ const textInputHandler = (() => {
 
     return { addTextAreasListeners };
 })();
-
 
 
 const expandElementHandler = (() => {
@@ -315,7 +350,7 @@ function addSwitchListListeners() {
 
 function switchList(button) {
     let clickedListName = button.lastChild.innerHTML;
-    if (currentList.name === clickedListName) return console.log('nooo');
+    if (currentList.name === clickedListName) return;
 
     taskLists.forEach(list => {
         if (list.name === clickedListName) {
@@ -346,24 +381,26 @@ renderTasks();
 function renderTasks() {
     tasksContainer.innerHTML = '';
 
-    for (const prop in currentList) {
-        if (!prop) return;
-        if (prop && typeof currentList[prop] === 'object') {
+    for (const task in currentList) {
+        if (!task) return;
+        if (task && typeof currentList[task] === 'object') {
             // Add new task
             let newTask = taskTemplate.cloneNode(true);
             newTask.classList.remove('task-template');
             tasksContainer.append(newTask);
 
             // Fill task data
-            newTask.children[0].children[1].children[0].innerHTML = currentList[prop].name;
-            newTask.children[0].children[1].children[0].nextElementSibling.value = currentList[prop].name;
+            newTask.dataset.position = currentList[task].position;
 
-            newTask.children[1].children[0].innerHTML = currentList[prop].details;
-            newTask.children[1].children[0].nextElementSibling.value = currentList[prop].details;
+            newTask.children[0].children[1].children[0].innerHTML = currentList[task].name;
+            newTask.children[0].children[1].children[0].nextElementSibling.value = currentList[task].name;
 
-            if (currentList[prop].dateTime) {
+            newTask.children[1].children[0].innerHTML = currentList[task].details;
+            newTask.children[1].children[0].nextElementSibling.value = currentList[task].details;
+
+            if (currentList[task].dateTime) {
                 let datePicker = newTask.children[2].children[1];
-                let date = currentList[prop].dateTime;
+                let date = currentList[task].dateTime;
                 let destination = datePicker.previousElementSibling;
 
                 datePicker.setAttribute('value', date);

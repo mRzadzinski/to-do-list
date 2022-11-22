@@ -5,19 +5,15 @@ const List = (name) => {
     return { name }
 };
 
-const Task = (name, details, dateTime, position) => {
-    name,
-    details,
-    dateTime,
-    position,
-    completed
-
-    return { name, details, dateTime, position };
+const Task = (name, details, dateTime, position, completed) => {
+    return { name, details, dateTime, position, completed };
 };
 
 const taskLists = [];
 let currentList;
 function setCurrentList(list) { currentList = list };
+
+// Dummy content START
 let weekend = List('Weekend');
 let dance = Task('Dance', 'Samba', '2022-11-23T17:33', 1, false);
 let sleep = Task('Sleep', 'Deep', '2022-11-26T11:11', 2, true);
@@ -37,6 +33,7 @@ taskLists.push(week);
 week.work = work;
 week.hurry = hurry;
 week.cry = cry;
+// Dummy content END
 
 if (!currentList) {
     currentList = taskLists[0];
