@@ -1,5 +1,6 @@
 import circleIcon from '../img/circle-icon.png';
 import parseISO from 'date-fns/parseISO';
+import { taskLists, currentList, setCurrentList } from './logic';
 
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
@@ -189,7 +190,7 @@ const expandElementHandler = (() => {
         });
     }
 
-    return { addTaskMenuListeners, addResizeTaskListener };
+    return { addTaskMenuListeners, addResizeTaskListener, taskMenu };
 })();
 
 
@@ -267,28 +268,62 @@ function addTaskListeners() {
 }
 
 const listNameTemplate = document.querySelector('.list-text-template');
-const dropdownTaskList = document.querySelector('#prepend-with-list');
+const taskListBreakLine = document.querySelector('#prepend-with-list');
+const taskMenuBreakLine = document.querySelector('#append-list');
 const taskListHeader = document.querySelector('#list-name-text');
+let switchListButtons;
 
-function renderTaskLists(taskLists, currentList) {
-    let lastRenderedList;
+renderTaskLists();
+function renderTaskLists() {
     // Render default list
     if (!taskLists[0]) {
         taskLists.push({ name: 'Quests' });
-        lastRenderedList = taskLists[0];
         currentList = taskLists[0];
-        console.log(currentList)
     }
-    // Render list
-    if (!lastRenderedList) lastRenderedList = currentList;
+    // Remove previous list
+    while (taskListBreakLine.previousSibling) taskListBreakLine.previousSibling.remove();
+    while (taskMenuBreakLine.nextSibling) taskMenuBreakLine.nextSibling.remove();
+    // Render list in task lists and task menu
     taskLists.forEach(list => {
         let newList = listNameTemplate.cloneNode(true);
+        let newList2 = listNameTemplate.cloneNode(true);
+
         newList.classList.remove('list-text-template');
-        dropdownTaskList.before(newList);
+        newList.classList.add('switch-list');
+        newList2.classList.remove('list-text-template');
+
+        taskListBreakLine.before(newList);
+        expandElementHandler.taskMenu.append(newList2);
+
         newList.lastChild.innerHTML = list.name;
-        lastRenderedList = newList;
+        newList2.lastChild.innerHTML = list.name;
+
+        // Make check mark visible the current list
+        if (list === currentList) newList.firstChild.classList.remove('hidden');
+        if (list === currentList) newList2.firstChild.classList.remove('hidden');
     });
+    switchListButtons = document.querySelectorAll('.switch-list');
+    addSwitchListListeners(switchListButtons);
     renderTaskListHeader(currentList);
+}
+
+function addSwitchListListeners() {
+    switchListButtons.forEach(button => {
+        button.addEventListener('click', function(){ switchList(button) });
+    });
+}
+
+function switchList(button) {
+    let clickedListName = button.lastChild.innerHTML;
+    if (currentList.name === clickedListName) return console.log('nooo');
+
+    taskLists.forEach(list => {
+        if (list.name === clickedListName) {
+            setCurrentList(list)
+            renderTaskLists(taskLists, currentList);
+            renderTasks(currentList);
+        }
+    });
 }
 
 // Render task list header
@@ -307,10 +342,12 @@ function createTaskHTML() {
 
     return newTask;
 }
+renderTasks();
+function renderTasks() {
+    tasksContainer.innerHTML = '';
 
-function renderTasks(currentList) {
     for (const prop in currentList) {
-        if (!prop) break;
+        if (!prop) return;
         if (prop && typeof currentList[prop] === 'object') {
             // Add new task
             let newTask = taskTemplate.cloneNode(true);
@@ -338,4 +375,4 @@ function renderTasks(currentList) {
     addTaskListeners();
 }
 
-export { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks };
+export { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, switchListButtons };
