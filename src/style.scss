@@ -397,6 +397,69 @@ textarea {
     }
 }
 
+.modal {
+    position: absolute;
+    // display: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 300px;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+
+    .modal-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 15px;
+        width: 200px;
+        height: 100px;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: white;
+    }
+
+    .modal-title {
+        font-size: .9rem;
+    }
+
+    .modal-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: end;
+        padding: 5px 10px 0 0;
+    }
+
+    input {
+        height: 1.7rem;
+        outline: none;
+        border: 0;
+        font-size: .9rem;
+        font-family: inherit;
+        background-color: $hover-color;
+        border: rgb(238, 238, 238) 1px solid;
+        border-bottom: 2px solid $blue;
+        padding-left: 10px;
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+.button {
+    font-size: .9rem;
+    cursor: pointer;
+}
+
+.add-done-btn,
+.rename-done-btn {
+    color: $blue;
+}
+
 .with-icon {
     display: flex;
     position: relative;

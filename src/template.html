@@ -68,59 +68,80 @@
             <div id="completed">Completed</div>
         </div>
         <div class="completed-list"></div>
-    </div>
 
-    <!-- List name template -->
-    <div class="dropdown-element with-icon list-text-template">
-        <svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M18.9 36 7.4 24.5l2.45-2.45 9.05 9.05 19.2-19.2 2.45 2.45Z"/></svg>
-        <div class="drop-el-text"></div>
-    </div>
-    <!-- /List name template -->
+        <div class="modal add-list-modal">
+            <div class="modal-content">
+                <div class="modal-title">Create new list</div>
+                <input id="new-list-input" type="text" placeholder="Enter name">
+                <div class="modal-buttons">
+                    <div class="button cancel-btn">Cancel</div>
+                    <div class="button add-done-btn">Done</div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Task template -->
-    <div class="task task-template" draggable="true">
-        <div class="task-main">
-            <div class="circle-container">
-                <img src="" alt="circle-icon" class="circle-icon">
-                <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M18.9 36 7.4 24.5l2.45-2.45 9.05 9.05 19.2-19.2 2.45 2.45Z"/></svg>
-            </div>
-            <div class="task-content">
-                <span class="task-value"></span>
-                <textarea rows="1" placeholder="Title"></textarea>
-            </div>
-            <div class="task-icon-container">
-                <svg class="more-icon task-menu-button" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M24.05 41.7q-1.25 0-2.125-.875t-.875-2.075q0-1.2.875-2.1.875-.9 2.075-.9 1.25 0 2.1.9.85.9.85 2.1 0 1.2-.85 2.075-.85.875-2.05.875Zm0-14.75q-1.25 0-2.125-.875T21.05 24q0-1.25.875-2.1.875-.85 2.075-.85 1.25 0 2.1.85.85.85.85 2.05 0 1.25-.85 2.125t-2.05.875Zm0-14.7q-1.25 0-2.125-.875T21.05 9.25q0-1.25.875-2.125T24 6.25q1.25 0 2.1.875.85.875.85 2.125t-.85 2.125q-.85.875-2.05.875Z"/></svg>
+        <div class="modal rename-list-modal hidden">
+            <div class="modal-content">
+                <div class="modal-title">Rename list</div>
+                <input id="rename-list-input" type="text" placeholder="Enter name">
+                <div class="modal-buttons">
+                    <div class="button cancel-btn">Cancel</div>
+                    <div class="button rename-done-btn">Done</div>
+                </div>
             </div>
         </div>
-        <div class="task-details">
-            <span class="details-value"></span>
-            <textarea rows="1" placeholder="Details"></textarea>
+    
+        <!-- List name template -->
+        <div class="dropdown-element with-icon list-text-template">
+            <svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M18.9 36 7.4 24.5l2.45-2.45 9.05 9.05 19.2-19.2 2.45 2.45Z"/></svg>
+            <div class="drop-el-text"></div>
         </div>
-        <div class="task-date">
-            <span class="date-value">Date / time</span>
-            <input class="time-picker" type="datetime-local" value="Date / time">
+        <!-- /List name template -->
+    
+        <!-- Task template -->
+        <div class="task task-template" draggable="true">
+            <div class="task-main">
+                <div class="circle-container">
+                    <img src="" alt="circle-icon" class="circle-icon">
+                    <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M18.9 36 7.4 24.5l2.45-2.45 9.05 9.05 19.2-19.2 2.45 2.45Z"/></svg>
+                </div>
+                <div class="task-content">
+                    <span class="task-value"></span>
+                    <textarea rows="1" placeholder="Title"></textarea>
+                </div>
+                <div class="task-icon-container">
+                    <svg class="more-icon task-menu-button" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M24.05 41.7q-1.25 0-2.125-.875t-.875-2.075q0-1.2.875-2.1.875-.9 2.075-.9 1.25 0 2.1.9.85.9.85 2.1 0 1.2-.85 2.075-.85.875-2.05.875Zm0-14.75q-1.25 0-2.125-.875T21.05 24q0-1.25.875-2.1.875-.85 2.075-.85 1.25 0 2.1.85.85.85.85 2.05 0 1.25-.85 2.125t-2.05.875Zm0-14.7q-1.25 0-2.125-.875T21.05 9.25q0-1.25.875-2.125T24 6.25q1.25 0 2.1.875.85.875.85 2.125t-.85 2.125q-.85.875-2.05.875Z"/></svg>
+                </div>
+            </div>
+            <div class="task-details">
+                <span class="details-value"></span>
+                <textarea rows="1" placeholder="Details"></textarea>
+            </div>
+            <div class="task-date">
+                <span class="date-value">Date / time</span>
+                <input class="time-picker" type="datetime-local" value="Date / time">
+            </div>
         </div>
+        <!-- /Task template -->
+    
+        <!-- Completed task template -->
+        <div class="task completed completed-task-template" draggable="true">
+            <div class="task-main">
+                <div class="circle-container">
+                    <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M18.9 36 7.4 24.5l2.45-2.45 9.05 9.05 19.2-19.2 2.45 2.45Z"/></svg>
+                </div>
+                <div class="task-content">
+                    <span class="task-value"></span>
+                </div>
+                <div class="task-icon-container">
+                    <svg class="trash-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M12.95 42.3q-1.4 0-2.4-1t-1-2.4V10.6H7.3V7.2h9.9V5.45h13.6V7.2h9.9v3.4h-2.25v28.3q0 1.35-1 2.375t-2.4 1.025Zm22.1-31.7h-22.1v28.3h22.1ZM18.2 34.7h3.2V14.75h-3.2Zm8.4 0h3.2V14.75h-3.2ZM12.95 10.6v28.3Z"/></svg>                        
+                </div>
+            </div>
+            <div class="task-details">
+                <span class="details-value"></span>
+            </div>
+        </div>
+        <!-- /Completed task template -->
     </div>
-    <!-- /Task template -->
-
-    <!-- Completed task template -->
-    <div class="task completed completed-task-template" draggable="true">
-        <div class="task-main">
-            <div class="circle-container">
-                <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M18.9 36 7.4 24.5l2.45-2.45 9.05 9.05 19.2-19.2 2.45 2.45Z"/></svg>
-            </div>
-            <div class="task-content">
-                <span class="task-value"></span>
-            </div>
-            <div class="task-icon-container">
-                <svg class="trash-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M12.95 42.3q-1.4 0-2.4-1t-1-2.4V10.6H7.3V7.2h9.9V5.45h13.6V7.2h9.9v3.4h-2.25v28.3q0 1.35-1 2.375t-2.4 1.025Zm22.1-31.7h-22.1v28.3h22.1ZM18.2 34.7h3.2V14.75h-3.2Zm8.4 0h3.2V14.75h-3.2ZM12.95 10.6v28.3Z"/></svg>                        
-            </div>
-        </div>
-        <div class="task-details">
-            <span class="details-value"></span>
-        </div>
-    </div>
-    <!-- /Completed task template -->
-
 </body>
 </html>
