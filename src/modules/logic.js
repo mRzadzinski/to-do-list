@@ -1,5 +1,6 @@
-// Objects
+import { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, modals } from './DOMmanipulation';
 
+// Objects
 const List = (name) => {
     name 
     return { name }
@@ -51,6 +52,62 @@ function updateTasksPosition(plusOrMin) {
     }
 }
 
+// Create new list
+const addListDoneBtn = document.querySelector('#add-list-done-btn');
+const renameDoneBtn = document.querySelector('#rename-done-btn');
+const newListInput = document.querySelector('#new-list-input');
+const renameListInput = document.querySelector('#rename-list-input');
+
+addListDoneBtn.addEventListener('click', () => {
+    if (newListInput.value) {
+        let newList = List(newListInput.value);
+        newListInput.value = '';
+        taskLists.push(newList);
+        currentList = newList;
+
+        renderTaskLists();
+        renderTasks();
+        modals.forEach(modal => modal.classList.add('hidden'));
+    }
+});
+
+// Rename List
+renameDoneBtn.addEventListener('click', () => {
+    if (renameListInput.value) {
+        currentList.name = renameListInput.value;
+        renameListInput.value = '';
+
+        renderTaskLists();
+        renderTasks();
+        modals.forEach(modal => modal.classList.add('hidden'));
+    }
+});
+
+// Delete list
+const deleteListButton = document.querySelector('#delete-list-button');
+
+deleteListButton.onclick = () => {
+    let index = taskLists.indexOf(currentList);
+    taskLists.splice(index, 1);
+    currentList = taskLists[0];
+
+    renderTaskLists();
+    renderTasks();
+};
+
+
+// Create new task
+const addTaskIcon = document.querySelector('#add-task-icon');
+const addTaskText = document.querySelector('#add-task-text');
+
+[addTaskIcon, addTaskText].forEach(element => element.addEventListener('click', () => {
+    let newTask = createTaskHTML();
+    updateTasksPosition('plus');
+}));
+
+// Remove task
+const deleteTaskButtons = document.querySelectorAll('.delete-task');
+
+
 export { updateTasksPosition, currentList, setCurrentList, taskLists };
 
-// click add task -> add new HTML element -> increase position number in old tasks -> add new element to list with position 1

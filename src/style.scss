@@ -436,7 +436,6 @@ textarea {
     input {
         height: 1.7rem;
         outline: none;
-        border: 0;
         font-size: .9rem;
         font-family: inherit;
         background-color: $hover-color;
@@ -455,8 +454,8 @@ textarea {
     cursor: pointer;
 }
 
-.add-done-btn,
-.rename-done-btn {
+#add-list-done-btn,
+#rename-done-btn {
     color: $blue;
 }
 

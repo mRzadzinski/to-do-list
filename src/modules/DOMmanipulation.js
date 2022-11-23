@@ -429,4 +429,22 @@ function renderTasks() {
     addTaskListeners();
 }
 
-export { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, switchListButtons };
+// Modals
+
+const createListBtn = document.querySelector('#create-list-btn');
+const renameListBtn = document.querySelector('#rename-list-btn');
+const addListModal = document.querySelector('#add-list-modal');
+const renameListModal = document.querySelector('#rename-list-modal');
+const modals = document.querySelectorAll('.modal');
+const modalCancelButtons = document.querySelectorAll('.cancel-btn');
+
+modalCancelButtons.forEach(button => button.addEventListener('click', () => {
+    modals.forEach(modal => modal.classList.add('hidden'));
+}));
+
+
+
+createListBtn.onclick = () => addListModal.classList.remove('hidden');
+renameListBtn.onclick = () => renameListModal.classList.remove('hidden');
+
+export { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, modals };

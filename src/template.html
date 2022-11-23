@@ -20,7 +20,7 @@
             <div id="prepend-with-list" class="break-line"></div>
             <div class="dropdown-element with-icon">
                 <svg class="plus-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M22.5 38V25.5H10v-3h12.5V10h3v12.5H38v3H25.5V38Z"/></svg>
-                <div class="drop-el-text">Create new list</div>
+                <div id="create-list-btn" class="drop-el-text">Create new list</div>
             </div>
         </div>
 
@@ -43,13 +43,13 @@
                 <div class="drop-el-text">Name</div>
             </div>
             <div class="break-line"></div>
-            <div class="dropdown-element">Rename list</div>
-            <div class="dropdown-element">Delete list</div>
+            <div id="rename-list-btn" class="dropdown-element">Rename list</div>
+            <div id="delete-list-button" class="dropdown-element">Delete list</div>
             <div class="dropdown-element">Delete all completed tasks</div>
         </div>
 
         <div class="dropdown dropdown-task-menu">
-            <div class="dropdown-element with-icon">
+            <div class="dropdown-element with-icon delete-task">
                 <svg class="trash-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M12.95 42.3q-1.4 0-2.4-1t-1-2.4V10.6H7.3V7.2h9.9V5.45h13.6V7.2h9.9v3.4h-2.25v28.3q0 1.35-1 2.375t-2.4 1.025Zm22.1-31.7h-22.1v28.3h22.1ZM18.2 34.7h3.2V14.75h-3.2Zm8.4 0h3.2V14.75h-3.2ZM12.95 10.6v28.3Z"/></svg>                        
                 <div class="drop-el-text">Delete</div>
             </div>
@@ -69,24 +69,24 @@
         </div>
         <div class="completed-list"></div>
 
-        <div class="modal add-list-modal">
+        <div id="add-list-modal" class="modal hidden">
             <div class="modal-content">
                 <div class="modal-title">Create new list</div>
-                <input id="new-list-input" type="text" placeholder="Enter name">
+                <input id="new-list-input" type="text" placeholder="Enter name" minlength="1">
                 <div class="modal-buttons">
                     <div class="button cancel-btn">Cancel</div>
-                    <div class="button add-done-btn">Done</div>
+                    <div id="add-list-done-btn" class="button done-btn">Done</div>
                 </div>
             </div>
         </div>
 
-        <div class="modal rename-list-modal hidden">
+        <div id="rename-list-modal" class="modal hidden">
             <div class="modal-content">
                 <div class="modal-title">Rename list</div>
-                <input id="rename-list-input" type="text" placeholder="Enter name">
+                <input id="rename-list-input" type="text" placeholder="Enter name" minlength="1">
                 <div class="modal-buttons">
                     <div class="button cancel-btn">Cancel</div>
-                    <div class="button rename-done-btn">Done</div>
+                    <div id="rename-done-btn" class="button done-btn">Done</div>
                 </div>
             </div>
         </div>
@@ -134,7 +134,7 @@
                     <span class="task-value"></span>
                 </div>
                 <div class="task-icon-container">
-                    <svg class="trash-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M12.95 42.3q-1.4 0-2.4-1t-1-2.4V10.6H7.3V7.2h9.9V5.45h13.6V7.2h9.9v3.4h-2.25v28.3q0 1.35-1 2.375t-2.4 1.025Zm22.1-31.7h-22.1v28.3h22.1ZM18.2 34.7h3.2V14.75h-3.2Zm8.4 0h3.2V14.75h-3.2ZM12.95 10.6v28.3Z"/></svg>                        
+                    <svg class="trash-icon delete-task" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M12.95 42.3q-1.4 0-2.4-1t-1-2.4V10.6H7.3V7.2h9.9V5.45h13.6V7.2h9.9v3.4h-2.25v28.3q0 1.35-1 2.375t-2.4 1.025Zm22.1-31.7h-22.1v28.3h22.1ZM18.2 34.7h3.2V14.75h-3.2Zm8.4 0h3.2V14.75h-3.2ZM12.95 10.6v28.3Z"/></svg>                        
                 </div>
             </div>
             <div class="task-details">
