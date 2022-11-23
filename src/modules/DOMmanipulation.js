@@ -40,14 +40,14 @@ const dateTimeHandler = (() => {
         let dateTime = `${dateTimeArray[0]}, ${dateTimeArray[1]} ${dateTimeArray[2]}, ${time}`;
 
         // Determine which task to update
-        let myTaskPosition = destination.parentNode.parentNode.dataset.position;
+        let myTaskPosition = destination.parentNode.parentNode.style.order;
         let myTask;
         for (const task in currentList) {
             if (currentList[task].position == myTaskPosition) {
                 myTask = currentList[task];
             } 
         }
-        myTask.dateTime = dateTime;
+        myTask.dateTime = date;
 
         if (dateTime.includes('Invalid')) {
             destination.innerHTML = 'Date / time';
@@ -99,10 +99,10 @@ const textInputHandler = (() => {
                 let myTaskPosition;
                 let dataSrc;
                 if (textAreas[i].parentNode.classList.contains('task-content')) {
-                    myTaskPosition = textAreas[i].parentNode.parentNode.parentNode.dataset.position;
+                    myTaskPosition = textAreas[i].parentNode.parentNode.parentNode.style.order;
                     dataSrc = 'task-content';
                 } else if (textAreas[i].parentNode.classList.contains('task-details')) {
-                    myTaskPosition = textAreas[i].parentNode.parentNode.dataset.position;
+                    myTaskPosition = textAreas[i].parentNode.parentNode.style.order;
                     dataSrc = 'task-details';
                 }
                 // Determine which task to update
@@ -368,6 +368,8 @@ function renderTaskListHeader(currentList) {
 
 const tasksContainer = document.querySelector('.tasks-container');
 const taskTemplate = document.querySelector('.task-template');
+const completedList = document.querySelector('.completed-list');
+const completedTaskTemplate = document.querySelector('.completed-task-template');
 
 function createTaskHTML() {
     let newTask = taskTemplate.cloneNode(true);
@@ -380,17 +382,20 @@ function createTaskHTML() {
 renderTasks();
 function renderTasks() {
     tasksContainer.innerHTML = '';
+    completedList.innerHTML = '';
 
     for (const task in currentList) {
         if (!task) return;
-        if (task && typeof currentList[task] === 'object') {
+
+        // Render ongoing tasks
+        if (task && typeof currentList[task] === 'object' && currentList[task].completed === false) {
             // Add new task
             let newTask = taskTemplate.cloneNode(true);
             newTask.classList.remove('task-template');
             tasksContainer.append(newTask);
 
             // Fill task data
-            newTask.dataset.position = currentList[task].position;
+            newTask.style.order = currentList[task].position;
 
             newTask.children[0].children[1].children[0].innerHTML = currentList[task].name;
             newTask.children[0].children[1].children[0].nextElementSibling.value = currentList[task].name;
@@ -406,8 +411,20 @@ function renderTasks() {
                 datePicker.setAttribute('value', date);
                 dateTimeHandler.convertDate(date, destination);
                 dateTimeHandler.toggleDate();
-            }            
+            }      
+        // Render completed tasks      
+        } else if (task && typeof currentList[task] === 'object' && currentList[task].completed === true) {
+            // Add new task
+            let newTask = completedTaskTemplate.cloneNode(true);
+            newTask.classList.remove('completed-task-template');
+            completedList.append(newTask);
+
+            // Fill task data
+            newTask.children[0].children[1].children[0].innerHTML = currentList[task].name;
+            newTask.children[1].children[0].innerHTML = currentList[task].details;
         }
+
+        
     }
     addTaskListeners();
 }

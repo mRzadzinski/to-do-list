@@ -105,6 +105,8 @@ body {
 }
 
 .tasks-container {
+    display: flex;
+    flex-direction: column;
     border-bottom: solid #e0e0e0 1px;
     flex-grow: 1;
     overflow: auto;
@@ -300,6 +302,10 @@ textarea {
         font-size: .9rem;
         letter-spacing: .03rem;
     }
+}
+
+.completed-task-template {
+    display: none;
 }
 
 .completed-list {

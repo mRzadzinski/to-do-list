@@ -67,24 +67,7 @@
             </div>
             <div id="completed">Completed</div>
         </div>
-        <div class="completed-list">
-            <div class="task completed" draggable="true">
-                <div class="task-main">
-                    <div class="circle-container">
-                        <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M18.9 36 7.4 24.5l2.45-2.45 9.05 9.05 19.2-19.2 2.45 2.45Z"/></svg>
-                    </div>
-                    <div class="task-content">
-                        <span class="task-value"> Task content</span>
-                    </div>
-                    <div class="task-icon-container">
-                        <svg class="trash-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M12.95 42.3q-1.4 0-2.4-1t-1-2.4V10.6H7.3V7.2h9.9V5.45h13.6V7.2h9.9v3.4h-2.25v28.3q0 1.35-1 2.375t-2.4 1.025Zm22.1-31.7h-22.1v28.3h22.1ZM18.2 34.7h3.2V14.75h-3.2Zm8.4 0h3.2V14.75h-3.2ZM12.95 10.6v28.3Z"/></svg>                        
-                    </div>
-                </div>
-                <div class="task-details">
-                    <span class="details-value">details</span>
-                </div>
-            </div>
-        </div>
+        <div class="completed-list"></div>
     </div>
 
     <!-- List name template -->
@@ -119,6 +102,25 @@
         </div>
     </div>
     <!-- /Task template -->
+
+    <!-- Completed task template -->
+    <div class="task completed completed-task-template" draggable="true">
+        <div class="task-main">
+            <div class="circle-container">
+                <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M18.9 36 7.4 24.5l2.45-2.45 9.05 9.05 19.2-19.2 2.45 2.45Z"/></svg>
+            </div>
+            <div class="task-content">
+                <span class="task-value"></span>
+            </div>
+            <div class="task-icon-container">
+                <svg class="trash-icon" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M12.95 42.3q-1.4 0-2.4-1t-1-2.4V10.6H7.3V7.2h9.9V5.45h13.6V7.2h9.9v3.4h-2.25v28.3q0 1.35-1 2.375t-2.4 1.025Zm22.1-31.7h-22.1v28.3h22.1ZM18.2 34.7h3.2V14.75h-3.2Zm8.4 0h3.2V14.75h-3.2ZM12.95 10.6v28.3Z"/></svg>                        
+            </div>
+        </div>
+        <div class="task-details">
+            <span class="details-value"></span>
+        </div>
+    </div>
+    <!-- /Completed task template -->
 
 </body>
 </html>
