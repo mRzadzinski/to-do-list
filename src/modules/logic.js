@@ -2,12 +2,12 @@ import { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, modals 
 
 // Objects
 const List = (name) => {
-    name 
-    return { name }
+    let tasks = {}
+    return { name, tasks }
 };
 
-const Task = (name, details, dateTime, position, completed) => {
-    return { name, details, dateTime, position, completed };
+const Task = (id, name, details, dateTime, position, completed) => {
+    return { id, name, details, dateTime, position, completed };
 };
 
 const taskLists = [];
@@ -16,24 +16,24 @@ function setCurrentList(list) { currentList = list };
 
 // Dummy content START
 let weekend = List('Weekend');
-let dance = Task('Dance', 'Samba', '2022-11-23T17:33', 4, false);
-let sleep = Task('Sleep', 'Deep', '2022-11-26T11:11', 2, true);
-let eat = Task('Eat', 'Sushi', '2022-12-26T11:11', 3, false);
+let dance = Task(1, 'Dance', 'Samba', '2022-11-23T17:33', 4, false);
+let sleep = Task(2, 'Sleep', 'Deep', '2022-11-26T11:11', 2, true);
+let eat = Task(3, 'Eat', 'Sushi', '2022-12-26T11:11', 3, false);
 
 taskLists.push(weekend);
-weekend.dance = dance;
-weekend.sleep = sleep;
-weekend.eat = eat;
+weekend.tasks.dance = dance;
+weekend.tasks.sleep = sleep;
+weekend.tasks.eat = eat;
 
 let week = List('Week');
-let work = Task('Work', 'On a highway', '2023-11-23T17:33', 1, false);
-let hurry = Task('Hurry', 'Catch a bus', '2023-09-26T10:11', 2, false);
-let cry = Task('Cry', 'Your eyes out', '2022-12-26T11:51', 3, true);
+let work = Task(1, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
+let hurry = Task(2, 'Hurry', 'Catch a bus', '2023-09-26T10:11', 2, false);
+let cry = Task(3, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, true);
 
 taskLists.push(week);
-week.work = work;
-week.hurry = hurry;
-week.cry = cry;
+week.tasks.work = work;
+week.tasks.hurry = hurry;
+week.tasks.cry = cry;
 // Dummy content END
 
 if (!currentList) {
@@ -41,12 +41,12 @@ if (!currentList) {
 };
 
 function updateTasksPosition(plusOrMin) {
-    for (const prop in currentList) {
-        if (prop && typeof currentList[prop] == 'object') {
+    for (const prop in currentList.tasks) {
+        if (prop && typeof currentList.tasks[prop] == 'object') {
             if (plusOrMin === 'plus') {
-                weekend[prop].position++;
+                weekend.tasks[prop].position++;
             } else if (plusOrMin === 'minus') {
-                weekend[prop].position--;
+                weekend.tasks[prop].position--;
             }
         }
     }
@@ -105,9 +105,25 @@ const addTaskText = document.querySelector('#add-task-text');
     updateTasksPosition('plus');
 }));
 
-// Remove task
-const deleteTaskButtons = document.querySelectorAll('.delete-task');
+// Delete task
+
+function deleteTask(taskID) {
+    for (let task in currentList.tasks) {
+        if (currentList.tasks[task].id == taskID) {
+            delete currentList.tasks[task];
+        }
+    }
+    refreshTasksID();
+}
+
+function refreshTasksID() {
+    let counter = 0;
+    for (let prop in currentList.tasks) {
+        currentList.tasks[prop].id = counter;        
+        counter++;
+    }
+}
 
 
-export { updateTasksPosition, currentList, setCurrentList, taskLists };
+export { updateTasksPosition, currentList, setCurrentList, taskLists, deleteTask };
 

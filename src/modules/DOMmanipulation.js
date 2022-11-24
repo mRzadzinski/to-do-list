@@ -1,11 +1,12 @@
 import circleIcon from '../img/circle-icon.png';
 import parseISO from 'date-fns/parseISO';
-import { taskLists, currentList, setCurrentList } from './logic';
+import { taskLists, currentList, setCurrentList, deleteTask } from './logic';
 
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
 
-
+let currentTaskHTML;
+let currentTaskID;
 
 const dateTimeHandler = (() => {
     let currentPicker;
@@ -42,9 +43,9 @@ const dateTimeHandler = (() => {
         // Determine which task to update
         let myTaskPosition = destination.parentNode.parentNode.style.order;
         let myTask;
-        for (const task in currentList) {
-            if (currentList[task].position == myTaskPosition) {
-                myTask = currentList[task];
+        for (const task in currentList.tasks) {
+            if (currentList.tasks[task].position == myTaskPosition) {
+                myTask = currentList.tasks[task];
             } 
         }
         myTask.dateTime = date;
@@ -107,9 +108,9 @@ const textInputHandler = (() => {
                 }
                 // Determine which task to update
                 let myTask;
-                for (const task in currentList) {
-                    if (currentList[task].position == myTaskPosition) {
-                        myTask = currentList[task];
+                for (const task in currentList.tasks) {
+                    if (currentList.tasks[task].position == myTaskPosition) {
+                        myTask = currentList.tasks[task];
                     } 
                 }
                 // Update task data
@@ -134,7 +135,6 @@ const textInputHandler = (() => {
     return { addTextAreasListeners };
 })();
 
-
 const expandElementHandler = (() => {
     const listNameHeader = document.querySelector('#list-name');
     const dropdowns = document.querySelectorAll('.dropdown');
@@ -154,7 +154,11 @@ const expandElementHandler = (() => {
         const taskMenuButtons = document.querySelectorAll('.task-menu-button');
 
         taskMenuButtons.forEach(button => button.addEventListener('click', (event) => {
-            lastUsedTaskMenuBtn = button; 
+            // Bind menu to clicked task
+            lastUsedTaskMenuBtn = button;
+            currentTaskHTML = button.parentNode.parentNode.parentNode;
+            currentTaskID = currentTaskHTML.dataset.id;
+
             // Set task menu position
             taskMenu.style.top = lastUsedTaskMenuBtn.getBoundingClientRect().y + 'px';
             expandElement(taskMenu, event);
@@ -312,7 +316,7 @@ renderTaskLists();
 function renderTaskLists() {
     // Render default list
     if (!taskLists[0]) {
-        taskLists.push({ name: 'Quests' });
+        taskLists.push({ name: 'Quests', tasks: {} });
         currentList = taskLists[0];
     }
     // Remove previous list
@@ -350,13 +354,14 @@ function addSwitchListListeners() {
 
 function switchList(button) {
     let clickedListName = button.lastChild.innerHTML;
-    if (currentList.name === clickedListName) return;
+    if (currentList.tasks.name === clickedListName) return;
+
 
     taskLists.forEach(list => {
         if (list.name === clickedListName) {
             setCurrentList(list)
-            renderTaskLists(taskLists, currentList);
-            renderTasks(currentList);
+            renderTaskLists();
+            renderTasks();
         }
     });
 }
@@ -384,28 +389,29 @@ function renderTasks() {
     tasksContainer.innerHTML = '';
     completedList.innerHTML = '';
 
-    for (const task in currentList) {
+    for (const task in currentList.tasks) {
         if (!task) return;
 
         // Render ongoing tasks
-        if (task && typeof currentList[task] === 'object' && currentList[task].completed === false) {
+        if (task && typeof currentList.tasks[task] === 'object' && currentList.tasks[task].completed === false) {
             // Add new task
             let newTask = taskTemplate.cloneNode(true);
             newTask.classList.remove('task-template');
             tasksContainer.append(newTask);
 
             // Fill task data
-            newTask.style.order = currentList[task].position;
+            newTask.style.order = currentList.tasks[task].position;
+            newTask.dataset.id = currentList.tasks[task].id;
 
-            newTask.children[0].children[1].children[0].innerHTML = currentList[task].name;
-            newTask.children[0].children[1].children[0].nextElementSibling.value = currentList[task].name;
+            newTask.children[0].children[1].children[0].innerHTML = currentList.tasks[task].name;
+            newTask.children[0].children[1].children[0].nextElementSibling.value = currentList.tasks[task].name;
 
-            newTask.children[1].children[0].innerHTML = currentList[task].details;
-            newTask.children[1].children[0].nextElementSibling.value = currentList[task].details;
+            newTask.children[1].children[0].innerHTML = currentList.tasks[task].details;
+            newTask.children[1].children[0].nextElementSibling.value = currentList.tasks[task].details;
 
-            if (currentList[task].dateTime) {
+            if (currentList.tasks[task].dateTime) {
                 let datePicker = newTask.children[2].children[1];
-                let date = currentList[task].dateTime;
+                let date = currentList.tasks[task].dateTime;
                 let destination = datePicker.previousElementSibling;
 
                 datePicker.setAttribute('value', date);
@@ -413,15 +419,16 @@ function renderTasks() {
                 dateTimeHandler.toggleDate();
             }      
         // Render completed tasks      
-        } else if (task && typeof currentList[task] === 'object' && currentList[task].completed === true) {
+        } else if (task && typeof currentList.tasks[task] === 'object' && currentList.tasks[task].completed === true) {
             // Add new task
             let newTask = completedTaskTemplate.cloneNode(true);
             newTask.classList.remove('completed-task-template');
             completedList.append(newTask);
 
             // Fill task data
-            newTask.children[0].children[1].children[0].innerHTML = currentList[task].name;
-            newTask.children[1].children[0].innerHTML = currentList[task].details;
+            newTask.dataset.id = currentList.tasks[task].id;
+            newTask.children[0].children[1].children[0].innerHTML = currentList.tasks[task].name;
+            newTask.children[1].children[0].innerHTML = currentList.tasks[task].details;
         }
 
         
@@ -429,8 +436,20 @@ function renderTasks() {
     addTaskListeners();
 }
 
-// Modals
+// Delete task
+addDeleteTaskListeners()
+function addDeleteTaskListeners() {
+    const deleteTaskButtons = document.querySelectorAll('.delete-task')
+    deleteTaskButtons.forEach(button => button.addEventListener('click', (e) => {
+        if (button.parentNode.classList.contains('dropdown')) {
+            currentTaskHTML.remove();
+            deleteTask(currentTaskID);
+            renderTasks();
+        }
+    }));
+}
 
+// Modals
 const createListBtn = document.querySelector('#create-list-btn');
 const renameListBtn = document.querySelector('#rename-list-btn');
 const addListModal = document.querySelector('#add-list-modal');
@@ -441,8 +460,6 @@ const modalCancelButtons = document.querySelectorAll('.cancel-btn');
 modalCancelButtons.forEach(button => button.addEventListener('click', () => {
     modals.forEach(modal => modal.classList.add('hidden'));
 }));
-
-
 
 createListBtn.onclick = () => addListModal.classList.remove('hidden');
 renameListBtn.onclick = () => renameListModal.classList.remove('hidden');
