@@ -17,7 +17,7 @@ function setCurrentList(list) { currentList = list };
 // Dummy content START
 let weekend = List('Weekend');
 let dance = Task(1, 'Dance', 'Samba', '2022-11-23T17:33', 4, false);
-let sleep = Task(2, 'Sleep', 'Deep', '2022-11-26T11:11', 2, true);
+let sleep = Task(2, 'Sleep', 'Deep', '2022-11-26T11:11', 2, false);
 let eat = Task(3, 'Eat', 'Sushi', '2022-12-26T11:11', 3, false);
 
 taskLists.push(weekend);
@@ -124,6 +124,59 @@ function refreshTasksID() {
     }
 }
 
+function toggleCompletedStatus(taskID) {
+    for (let task in currentList.tasks) {
+        if (currentList.tasks[task].id == taskID) {
+            
+            if (currentList.tasks[task].completed === false) {
+                currentList.tasks[task].completed = true
+            } else if (currentList.tasks[task].completed === true) {
+                currentList.tasks[task].completed = false;
+            }
+        }
+    }
+}
 
-export { updateTasksPosition, currentList, setCurrentList, taskLists, deleteTask };
+function sortBy(sortMethod) {
+    // Get array of object entries
+    let currentListArray = Object.entries(currentList.tasks);
+
+    if (sortMethod === 'name') {
+        currentListArray.sort((a, b) => {
+            let aa = a[1].name.toLowerCase();
+            let bb = b[1].name.toLowerCase();
+
+            return aa < bb ? -1 : aa > bb ? 1 : 0;
+        });
+        // Set tasks position according to sorted array
+        for (let i = 0; i < currentListArray.length; i++) {
+            currentListArray[i][1].currentPosition = i;
+        }
+
+    } else if (sortMethod === 'date') {
+        currentListArray.sort((a, b) => {
+            let aa = new Date(a[1].dateTime);
+            let bb = new Date(b[1].dateTime);
+
+            return aa - bb;
+        });
+        // Set tasks position according to sorted array
+        for (let i = 0; i < currentListArray.length; i++) {
+            currentListArray[i][1].currentPosition = i;
+        }
+
+    } else if (sortMethod === 'custom') {
+
+        for (let i = 0; i < currentListArray.length; i++) {
+            currentListArray[i][1].currentPosition = currentListArray[i][1].customPosition;
+        }
+    }
+    // console.log(currentListArray)
+    // console.log(currentListArray[0])
+    // console.log(currentListArray[0][1])
+    // console.log(currentListArray[0][1].date);
+}
+
+
+export { updateTasksPosition, currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus };
 

@@ -1,6 +1,6 @@
 import circleIcon from '../img/circle-icon.png';
 import parseISO from 'date-fns/parseISO';
-import { taskLists, currentList, setCurrentList, deleteTask } from './logic';
+import { taskLists, currentList, setCurrentList, deleteTask, toggleCompletedStatus } from './logic';
 
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
@@ -229,7 +229,7 @@ const expandElementHandler = (() => {
         });
     }
 
-    return { addTaskMenuListeners, addResizeTaskListener, taskMenu };
+    return { addTaskMenuListeners, addResizeTaskListener, taskMenu, expandElement };
 })();
 
 
@@ -304,6 +304,7 @@ function addTaskListeners() {
     expandElementHandler.addTaskMenuListeners();
     expandElementHandler.addResizeTaskListener()
     dragAndDropHandler.addDragDropListeners();
+    addToggleCompletedListeners();
 }
 
 const listNameTemplate = document.querySelector('.list-text-template');
@@ -446,6 +447,20 @@ function addDeleteTaskListeners() {
             deleteTask(currentTaskID);
             renderTasks();
         }
+    }));
+}
+
+function addToggleCompletedListeners() {
+    const toggleCompletedButtons = document.querySelectorAll('.toggle-completed-btn');
+    toggleCompletedButtons.forEach(button => button.addEventListener('click', () => {
+        let currentTaskHTML = button.parentNode.parentNode.parentNode;;
+        let currentTaskID = currentTaskHTML.dataset.id
+        toggleCompletedStatus(currentTaskID);
+        console.log(currentList.tasks)
+        renderTasks();
+        // Reset completed list height
+        expandElementHandler.expandElement(completedList);
+        expandElementHandler.expandElement(completedList);
     }));
 }
 
