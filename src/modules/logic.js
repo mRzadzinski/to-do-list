@@ -1,10 +1,12 @@
-import { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, modals } from './DOMmanipulation';
+import { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, modals } from './DOMmanipulation';
 
 // Objects
 const List = (name) => {
+    let sortMethod = 'custom';
     let tasks = {}
-    return { name, tasks }
+    return { name, sortMethod, tasks }
 };
+
 
 const Task = (id, name, details, dateTime, position, completed) => {
     return { id, name, details, dateTime, position, completed };
@@ -13,12 +15,13 @@ const Task = (id, name, details, dateTime, position, completed) => {
 const taskLists = [];
 let currentList;
 function setCurrentList(list) { currentList = list };
+function createDefaultList() { taskLists.push(List('Quests')) }
 
 // Dummy content START
 let weekend = List('Weekend');
-let dance = Task(1, 'Dance', 'Samba', '2022-11-23T17:33', 4, false);
-let sleep = Task(2, 'Sleep', 'Deep', '2022-11-26T11:11', 2, false);
-let eat = Task(3, 'Eat', 'Sushi', '2022-12-26T11:11', 3, false);
+let dance = Task(1, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
+let sleep = Task(2, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
+let eat = Task(3, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
 
 taskLists.push(weekend);
 weekend.tasks.dance = dance;
@@ -168,8 +171,31 @@ function toggleCompletedStatus(taskID) {
     }
 }
 
-let sortMethod = 'name';
-sortBy(sortMethod)
+// Sort
+const sortNameBtn = document.querySelector('#sort-name-btn');
+const sortDateBtn = document.querySelector('#sort-date-btn');
+const sortCustomBtn = document.querySelector('#sort-custom-btn');
+
+sortCustomBtn.onclick = () => {
+    currentList.sortMethod = 'custom';
+    sortBtnHandler(sortCustomBtn);
+};
+
+sortDateBtn.onclick = () => {
+    currentList.sortMethod = 'date';
+    sortBtnHandler(sortDateBtn);
+};
+
+sortNameBtn.onclick = () => {
+    currentList.sortMethod = 'name';
+    sortBtnHandler(sortNameBtn);
+};
+
+function sortBtnHandler(button) {
+    toggleSortCheckIcon(button);
+    let sortedArray = sortBy(currentList.sortMethod);
+    updateTasksOrder(sortedArray);
+}
 
 function sortBy(sortMethod) {
     // Get array of object entries
@@ -182,10 +208,6 @@ function sortBy(sortMethod) {
 
             return aa < bb ? -1 : aa > bb ? 1 : 0;
         });
-        // Set tasks position according to sorted array
-        for (let i = 0; i < currentListArray.length; i++) {
-            currentListArray[i][1].position = i;
-        }
 
     } else if (sortMethod === 'date') {
         currentListArray.sort((a, b) => {
@@ -194,25 +216,19 @@ function sortBy(sortMethod) {
 
             return aa - bb;
         });
-        // Set tasks position according to sorted array
-        for (let i = 0; i < currentListArray.length; i++) {
-            currentListArray[i][1].position = i;
-        }
 
     } else if (sortMethod === 'custom') {
+        currentListArray.sort((a, b) => {
+            let aa = a[1].position;
+            let bb = b[1].position;
 
-        for (let i = 0; i < currentListArray.length; i++) {
-            currentListArray[i][1].currentPosition = currentListArray[i][1].customPosition;
-        }
+            return aa - bb;
+        });
+
     }
     return currentListArray;
-
-    // console.log(currentListArray)
-    // console.log(currentListArray[0])
-    // console.log(currentListArray[0][1])
-    // console.log(currentListArray[0][1].date);
 }
 
 
-export { updateTasksPosition, currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus };
+export { updateTasksPosition, currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList };
 

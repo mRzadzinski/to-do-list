@@ -1,6 +1,6 @@
 import circleIcon from '../img/circle-icon.png';
 import parseISO from 'date-fns/parseISO';
-import { taskLists, currentList, setCurrentList, deleteTask, toggleCompletedStatus } from './logic';
+import { taskLists, currentList, setCurrentList, deleteTask, toggleCompletedStatus, createDefaultList } from './logic';
 
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
@@ -318,7 +318,7 @@ renderTaskLists();
 function renderTaskLists() {
     // Render default list
     if (!taskLists[0]) {
-        taskLists.push({ name: 'Quests', tasks: {} });
+        createDefaultList();
         currentList = taskLists[0];
     }
     // Remove previous list
@@ -473,21 +473,22 @@ function addToggleCompletedListeners() {
 
 // Sort HTML
 const sortButtons = document.querySelectorAll('.sort-btn');
-const sortNameBtn = document.querySelector('#sort-name-btn');
-const sortDateBtn = document.querySelector('#sort-date-btn');
-const sortCustomBtn = document.querySelector('#sort-custom-btn');
 
-sortCustomBtn.onclick = () => {
-    toggleSortCheckIcon(sortCustomBtn);
-};
+function updateTasksOrder(sortedTaskArray) {
+    // console.log(sortedTaskArray)
+    const allTasks = document.querySelectorAll('.task');
 
-sortDateBtn.onclick = () => {
-    toggleSortCheckIcon(sortDateBtn);
-};
+    for (let i = 0; i < sortedTaskArray.length; i++) {
+        allTasks.forEach(taskHTML => {
+            let taskHTMLid = taskHTML.dataset.id;
 
-sortNameBtn.onclick = () => {
-    toggleSortCheckIcon(sortNameBtn);
-};
+            if (sortedTaskArray[i][1].id === +taskHTMLid) {
+                console.log('we\'re here');
+                taskHTML.style.order = i;
+            }
+        });
+    }
+}
 
 function toggleSortCheckIcon(sortBtn) {
     sortButtons.forEach(button => {
@@ -515,4 +516,4 @@ modalCancelButtons.forEach(button => button.addEventListener('click', () => {
 createListBtn.onclick = () => addListModal.classList.remove('hidden');
 renameListBtn.onclick = () => renameListModal.classList.remove('hidden');
 
-export { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, modals };
+export { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, modals };
