@@ -492,7 +492,6 @@ function updateTasksOrder(sortedTaskArray) {
 function toggleSortCheckIcon() {
     const sortButtons = document.querySelectorAll('.sort-btn');
     let sortMethod = currentList.sortMethod;
-    console.log(sortButtons)
 
     if (sortMethod === 'custom') {
         sortMethod = 'sort-custom-btn';

@@ -20,7 +20,7 @@ function createDefaultList() { taskLists.push(List('Quests')) }
 // Dummy content START
 let weekend = List('Weekend');
 let dance = Task(1, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
-let sleep = Task(2, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
+let sleep = Task(2, 'Sleep', 'Deep', '2022-12-26T11:11', 2, true);
 let eat = Task(3, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
 
 taskLists.push(weekend);
@@ -42,18 +42,6 @@ week.tasks.cry = cry;
 if (!currentList) {
     currentList = taskLists[0];
 };
-
-function updateTasksPosition(plusOrMin) {
-    for (const prop in currentList.tasks) {
-        if (prop && typeof currentList.tasks[prop] == 'object') {
-            if (plusOrMin === 'plus') {
-                weekend.tasks[prop].position++;
-            } else if (plusOrMin === 'minus') {
-                weekend.tasks[prop].position--;
-            }
-        }
-    }
-}
 
 // Create new list
 const addListDoneBtn = document.querySelector('#add-list-done-btn');
@@ -112,10 +100,10 @@ const addTaskText = document.querySelector('#add-task-text');
         uniqueCheck = ensureUniqueName(newTaskName);
     }
 
+    // updateTasksPosition('plus');
     currentList.tasks[newTaskName] = Task('', '', '', '', 1, false);
     refreshTasksID();
     renderTasks();
-
 }));
 
 function ensureUniqueName(newTaskName) {
@@ -138,6 +126,17 @@ function generateRandomString() {
     return result;
 }
 
+function updateTasksPosition(plusOrMin) {
+    for (const prop in currentList.tasks) {
+        if (prop && typeof currentList.tasks[prop] == 'object') {
+            if (plusOrMin === 'plus') {
+                weekend.tasks[prop].position++;
+            } else if (plusOrMin === 'minus') {
+                weekend.tasks[prop].position--;
+            }
+        }
+    }
+}
 
 // Delete task
 
@@ -169,6 +168,20 @@ function toggleCompletedStatus(taskID) {
             }
         }
     }
+}
+
+// Delete completed tasks
+
+let deleteCompletedTasksBtn = document.querySelector('#delete-completed-tasks');
+deleteCompletedTasksBtn.onclick = deleteCompletedTasks;
+
+function deleteCompletedTasks() {
+    for (let task in currentList.tasks) {
+        if (currentList.tasks[task].completed === true) {
+            delete currentList.tasks[task];
+        }
+    }
+    renderTasks();
 }
 
 // Sort
