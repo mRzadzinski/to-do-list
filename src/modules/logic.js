@@ -178,28 +178,29 @@ const sortCustomBtn = document.querySelector('#sort-custom-btn');
 
 sortCustomBtn.onclick = () => {
     currentList.sortMethod = 'custom';
-    sortBtnHandler(sortCustomBtn);
+    sortTasks();
 };
 
 sortDateBtn.onclick = () => {
     currentList.sortMethod = 'date';
-    sortBtnHandler(sortDateBtn);
+    sortTasks();
 };
 
 sortNameBtn.onclick = () => {
     currentList.sortMethod = 'name';
-    sortBtnHandler(sortNameBtn);
+    sortTasks();
 };
 
-function sortBtnHandler(button) {
-    toggleSortCheckIcon(button);
-    let sortedArray = sortBy(currentList.sortMethod);
+function sortTasks() {
+    toggleSortCheckIcon();
+    let sortedArray = getSortedTaskArray();
     updateTasksOrder(sortedArray);
 }
 
-function sortBy(sortMethod) {
+function getSortedTaskArray() {
     // Get array of object entries
     let currentListArray = Object.entries(currentList.tasks);
+    let sortMethod = currentList.sortMethod;
 
     if (sortMethod === 'name') {
         currentListArray.sort((a, b) => {
@@ -230,5 +231,5 @@ function sortBy(sortMethod) {
 }
 
 
-export { updateTasksPosition, currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList };
+export { updateTasksPosition, currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks };
 

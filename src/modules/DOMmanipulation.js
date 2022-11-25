@@ -1,6 +1,6 @@
 import circleIcon from '../img/circle-icon.png';
 import parseISO from 'date-fns/parseISO';
-import { taskLists, currentList, setCurrentList, deleteTask, toggleCompletedStatus, createDefaultList } from './logic';
+import { taskLists, currentList, setCurrentList, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks } from './logic';
 
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
@@ -433,6 +433,7 @@ function renderTasks() {
         }
     }
     addTaskListeners();
+    sortTasks();
 }
 
 // Delete ongoing task
@@ -472,7 +473,6 @@ function addToggleCompletedListeners() {
 }
 
 // Sort HTML
-const sortButtons = document.querySelectorAll('.sort-btn');
 
 function updateTasksOrder(sortedTaskArray) {
     // console.log(sortedTaskArray)
@@ -483,16 +483,27 @@ function updateTasksOrder(sortedTaskArray) {
             let taskHTMLid = taskHTML.dataset.id;
 
             if (sortedTaskArray[i][1].id === +taskHTMLid) {
-                console.log('we\'re here');
                 taskHTML.style.order = i;
             }
         });
     }
 }
 
-function toggleSortCheckIcon(sortBtn) {
+function toggleSortCheckIcon() {
+    const sortButtons = document.querySelectorAll('.sort-btn');
+    let sortMethod = currentList.sortMethod;
+    console.log(sortButtons)
+
+    if (sortMethod === 'custom') {
+        sortMethod = 'sort-custom-btn';
+    } else if (sortMethod === 'date') {
+        sortMethod = 'sort-date-btn';
+    } else if (sortMethod === 'name') {
+        sortMethod = 'sort-name-btn';
+    }
+
     sortButtons.forEach(button => {
-        if (button === sortBtn) {
+        if (button.id === sortMethod) {
             button.firstChild.classList.remove('hidden');
         } else {
             button.firstChild.classList.add('hidden');
