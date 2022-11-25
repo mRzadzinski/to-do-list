@@ -33,8 +33,11 @@ body {
 }
 
 .container {
-    display: flex;
-    flex-direction: column;
+    // display: flex;
+    // flex-direction: column;
+    display: grid;
+    grid-template-rows: 63px 40px 1fr 41px ;
+
     position: relative;
     width: 300px;
     height: 100vh;
@@ -105,8 +108,9 @@ body {
 }
 
 .tasks-container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: min-content;
+    grid-auto-rows: min-content;
     border-bottom: solid #e0e0e0 1px;
     flex-grow: 1;
     overflow: auto;
@@ -377,11 +381,16 @@ textarea {
     }
 }
 
-.dropdown-header {
+#dropdown-header {
     font-size: .8rem;
     font-weight: 400;
     color: #80868b;
     margin: 9px 0 5px 20px;
+    cursor: default;
+
+    &:hover {
+        background-color: white;
+    }
 }
 
 .dropdown-element {

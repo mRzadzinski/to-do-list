@@ -17,7 +17,7 @@ function setCurrentList(list) { currentList = list };
 // Dummy content START
 let weekend = List('Weekend');
 let dance = Task(1, 'Dance', 'Samba', '2022-11-23T17:33', 4, false);
-let sleep = Task(2, 'Sleep', 'Deep', '2022-11-26T11:11', 2, true);
+let sleep = Task(2, 'Sleep', 'Deep', '2022-11-26T11:11', 2, false);
 let eat = Task(3, 'Eat', 'Sushi', '2022-12-26T11:11', 3, false);
 
 taskLists.push(weekend);
@@ -101,9 +101,40 @@ const addTaskIcon = document.querySelector('#add-task-icon');
 const addTaskText = document.querySelector('#add-task-text');
 
 [addTaskIcon, addTaskText].forEach(element => element.addEventListener('click', () => {
-    let newTask = createTaskHTML();
-    updateTasksPosition('plus');
+    let newTaskName = generateRandomString();
+    let uniqueCheck = ensureUniqueName(newTaskName);
+
+    while (uniqueCheck === false) {
+        newTaskName = generateRandomString();
+        uniqueCheck = ensureUniqueName(newTaskName);
+    }
+
+    currentList.tasks[newTaskName] = Task('', '', '', '', 1, false);
+    refreshTasksID();
+    renderTasks();
+
 }));
+
+function ensureUniqueName(newTaskName) {
+    let unique = true;
+    for (let task in currentList.tasks) {
+        if (currentList.tasks[task].name === newTaskName) {
+            console.log('same')
+            unique = false;
+        }
+    }
+    return unique;
+}
+
+function generateRandomString() {
+    let result = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for ( let i = 0; i < 7; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+}
+
 
 // Delete task
 
@@ -137,6 +168,9 @@ function toggleCompletedStatus(taskID) {
     }
 }
 
+let sortMethod = 'name';
+sortBy(sortMethod)
+
 function sortBy(sortMethod) {
     // Get array of object entries
     let currentListArray = Object.entries(currentList.tasks);
@@ -150,7 +184,7 @@ function sortBy(sortMethod) {
         });
         // Set tasks position according to sorted array
         for (let i = 0; i < currentListArray.length; i++) {
-            currentListArray[i][1].currentPosition = i;
+            currentListArray[i][1].position = i;
         }
 
     } else if (sortMethod === 'date') {
@@ -162,7 +196,7 @@ function sortBy(sortMethod) {
         });
         // Set tasks position according to sorted array
         for (let i = 0; i < currentListArray.length; i++) {
-            currentListArray[i][1].currentPosition = i;
+            currentListArray[i][1].position = i;
         }
 
     } else if (sortMethod === 'custom') {
@@ -171,6 +205,8 @@ function sortBy(sortMethod) {
             currentListArray[i][1].currentPosition = currentListArray[i][1].customPosition;
         }
     }
+    return currentListArray;
+
     // console.log(currentListArray)
     // console.log(currentListArray[0])
     // console.log(currentListArray[0][1])

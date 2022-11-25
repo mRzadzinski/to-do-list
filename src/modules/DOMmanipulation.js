@@ -41,10 +41,10 @@ const dateTimeHandler = (() => {
         let dateTime = `${dateTimeArray[0]}, ${dateTimeArray[1]} ${dateTimeArray[2]}, ${time}`;
 
         // Determine which task to update
-        let myTaskPosition = destination.parentNode.parentNode.style.order;
+        let myTaskID = destination.parentNode.parentNode.dataset.id;
         let myTask;
         for (const task in currentList.tasks) {
-            if (currentList.tasks[task].position == myTaskPosition) {
+            if (currentList.tasks[task].id == myTaskID) {
                 myTask = currentList.tasks[task];
             } 
         }
@@ -96,20 +96,20 @@ const textInputHandler = (() => {
             textAreas[i].setAttribute('style', 'height:' + height + 'px;overflow-y:hidden;');
             textAreas[i].addEventListener('input', updateTextAreas);
             textAreas[i].addEventListener('input', () => {
-                // Determine task position
-                let myTaskPosition;
+                // Determine task id
+                let myTaskID;
                 let dataSrc;
                 if (textAreas[i].parentNode.classList.contains('task-content')) {
-                    myTaskPosition = textAreas[i].parentNode.parentNode.parentNode.style.order;
+                    myTaskID = textAreas[i].parentNode.parentNode.parentNode.dataset.id;
                     dataSrc = 'task-content';
                 } else if (textAreas[i].parentNode.classList.contains('task-details')) {
-                    myTaskPosition = textAreas[i].parentNode.parentNode.style.order;
+                    myTaskID = textAreas[i].parentNode.parentNode.dataset.id;
                     dataSrc = 'task-details';
                 }
                 // Determine which task to update
                 let myTask;
                 for (const task in currentList.tasks) {
-                    if (currentList.tasks[task].position == myTaskPosition) {
+                    if (currentList.tasks[task].id == myTaskID) {
                         myTask = currentList.tasks[task];
                     } 
                 }
@@ -358,7 +358,6 @@ function switchList(button) {
     let clickedListName = button.lastChild.innerHTML;
     if (currentList.tasks.name === clickedListName) return;
 
-
     taskLists.forEach(list => {
         if (list.name === clickedListName) {
             setCurrentList(list)
@@ -432,8 +431,6 @@ function renderTasks() {
             newTask.children[0].children[1].children[0].innerHTML = currentList.tasks[task].name;
             newTask.children[1].children[0].innerHTML = currentList.tasks[task].details;
         }
-
-        
     }
     addTaskListeners();
 }
@@ -473,6 +470,35 @@ function addToggleCompletedListeners() {
         expandElementHandler.expandElement(completedList);
     }));
 }
+
+// Sort HTML
+const sortButtons = document.querySelectorAll('.sort-btn');
+const sortNameBtn = document.querySelector('#sort-name-btn');
+const sortDateBtn = document.querySelector('#sort-date-btn');
+const sortCustomBtn = document.querySelector('#sort-custom-btn');
+
+sortCustomBtn.onclick = () => {
+    toggleSortCheckIcon(sortCustomBtn);
+};
+
+sortDateBtn.onclick = () => {
+    toggleSortCheckIcon(sortDateBtn);
+};
+
+sortNameBtn.onclick = () => {
+    toggleSortCheckIcon(sortNameBtn);
+};
+
+function toggleSortCheckIcon(sortBtn) {
+    sortButtons.forEach(button => {
+        if (button === sortBtn) {
+            button.firstChild.classList.remove('hidden');
+        } else {
+            button.firstChild.classList.add('hidden');
+        }
+    });
+}
+
 
 // Modals
 const createListBtn = document.querySelector('#create-list-btn');
