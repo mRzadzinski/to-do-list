@@ -126,6 +126,10 @@ body {
     padding: 11px 0 5px 0;
     overflow: hidden;
 
+    .check-icon {
+        display: none;
+    }
+
     .task-value,
     .details-value {
         display: block;
@@ -150,10 +154,6 @@ body {
             .check-icon {
                 display: block;
             }
-        }
-
-        .check-icon {
-            display: none;
         }
 
         .circle-icon {
@@ -315,6 +315,10 @@ textarea {
     transition: max-height 0.2s ease-out;
     margin-bottom: 4px;
     text-decoration: line-through;
+
+    .check-icon {
+        display: block;
+    }
     
     .task-details {
         margin-top: 0px;

@@ -17,7 +17,7 @@ function setCurrentList(list) { currentList = list };
 // Dummy content START
 let weekend = List('Weekend');
 let dance = Task(1, 'Dance', 'Samba', '2022-11-23T17:33', 4, false);
-let sleep = Task(2, 'Sleep', 'Deep', '2022-11-26T11:11', 2, false);
+let sleep = Task(2, 'Sleep', 'Deep', '2022-11-26T11:11', 2, true);
 let eat = Task(3, 'Eat', 'Sushi', '2022-12-26T11:11', 3, false);
 
 taskLists.push(weekend);
