@@ -305,6 +305,7 @@ function addTaskListeners() {
     expandElementHandler.addResizeTaskListener()
     dragAndDropHandler.addDragDropListeners();
     addToggleCompletedListeners();
+    deleteCompletedTaskListeners();
 }
 
 const listNameTemplate = document.querySelector('.list-text-template');
@@ -437,18 +438,20 @@ function renderTasks() {
     addTaskListeners();
 }
 
-// Delete task
-addDeleteTaskListeners()
-function addDeleteTaskListeners() {
+// Delete ongoing task
+const delTaskMenuBtn = document.querySelector('#delete-task-menu-button');
+delTaskMenuBtn.onclick = () => {
+    currentTaskHTML.remove();
+        deleteTask(currentTaskID);
+        renderTasks();
+};
+
+// Delete completed task
+function deleteCompletedTaskListeners() {
     const deleteTaskButtons = document.querySelectorAll('.delete-task')
     deleteTaskButtons.forEach(button => button.addEventListener('click', (e) => {
-        // Handle ongoing task
-        if (button.parentNode.classList.contains('dropdown')) {
-            currentTaskHTML.remove();
-            deleteTask(currentTaskID);
-            renderTasks();
-        // Handle completed task
-        } else if (button.parentNode.parentNode.parentNode.classList.contains('task')) {
+
+        if (button.parentNode.parentNode.parentNode.classList.contains('task')) {
             let completedTask = button.parentNode.parentNode.parentNode;
             let completedTaskID = completedTask.dataset.id;
             completedTask.remove();
