@@ -113,9 +113,7 @@ const addTaskText = document.querySelector('#add-task-text');
         uniqueCheck = getUniqueName(newTaskName);
     }
 
-    if (currentList.sortMethod === 'custom') {
-        increaseTasksPosition();
-    }
+    increaseTasksPosition();
     currentList.tasks[newTaskName] = Task('', '', '', '', 1, false);
     refreshTasksID();
     renderTasks();
@@ -145,9 +143,9 @@ function generateRandomString() {
 }
 
 function increaseTasksPosition() {
-    for (const prop in currentList.tasks) {
-        if (prop && typeof currentList.tasks[prop] == 'object') {
-            weekend.tasks[prop].position++;
+    for (let task in currentList.tasks) {
+        if (task && typeof currentList.tasks[task] === 'object') {
+            currentList.tasks[task].position++;
         }
     }
 }
@@ -164,13 +162,14 @@ function deleteTask(taskID) {
 }
 
 function refreshTasksID() {
-    for (let list in taskLists) {
+    taskLists.forEach(list => {
+        console.log(list)
         let counter = 0;
         for (let task in list.tasks) {
-            list.tasks[task].id = counter;        
+            list.tasks[task].id = counter;      
             counter++;
         }
-    }
+    });
 }
 
 function toggleCompletedStatus(taskID) {
@@ -264,7 +263,13 @@ function getSortedTaskArray() {
 
     } else if (sortMethod === 'date') {
         currentListArray.sort((a, b) => {
-            let aa = new Date(a[1].dateTime);
+            let aa;
+            // Handle empty tasks
+            if (!a[1].dateTime) {
+                aa = new Date('January 1, 1500 00:00:00');
+            } else {
+                aa = new Date(a[1].dateTime);
+            }
             let bb = new Date(b[1].dateTime);
 
             return aa - bb;
@@ -283,5 +288,5 @@ function getSortedTaskArray() {
 }
 
 
-export { increaseTasksPosition as updateTasksPosition, currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask };
+export { currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask };
 

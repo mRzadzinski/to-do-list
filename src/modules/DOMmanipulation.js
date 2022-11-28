@@ -488,15 +488,14 @@ function addToggleCompletedListeners() {
 // Sort HTML
 
 function updateTasksOrder(sortedTaskArray) {
-    // console.log(sortedTaskArray)
     const allTasks = document.querySelectorAll('.task');
 
     for (let i = 0; i < sortedTaskArray.length; i++) {
         allTasks.forEach(taskHTML => {
-            let taskHTMLid = taskHTML.dataset.id;
+            let taskHtmlID = taskHTML.dataset.id;
 
-            if (sortedTaskArray[i][1].id === +taskHTMLid) {
-                taskHTML.style.order = i;
+            if (sortedTaskArray[i][1].id === +taskHtmlID) {
+                taskHTML.style.order = i + 1;
             }
         });
     }
