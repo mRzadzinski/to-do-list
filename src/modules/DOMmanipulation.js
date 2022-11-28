@@ -369,6 +369,7 @@ function switchList(button) {
             renderTasks();
         }
     });
+    console.log(currentList)
 }
 
 // Render task list header

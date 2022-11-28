@@ -163,7 +163,6 @@ function deleteTask(taskID) {
 
 function refreshTasksID() {
     taskLists.forEach(list => {
-        console.log(list)
         let counter = 0;
         for (let task in list.tasks) {
             list.tasks[task].id = counter;      
@@ -214,6 +213,8 @@ function moveTask(taskID, destinationListName) {
         if (currentList.tasks[task].id === +taskID) {
             // Copy task to destination list
             destinationList.tasks[task] = currentList.tasks[task];
+            // Position as a last element in new location
+            destinationList.tasks[task].position = Object.keys(destinationList.tasks).length;
             delete currentList.tasks[task];
         }
     }
