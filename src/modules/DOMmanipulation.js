@@ -254,11 +254,13 @@ const dragAndDropHandler = (() => {
     }
 
     function handleDragStart(e) {
+        if (currentList.sortMethod !== 'custom') return;
         this.style.opacity = '.5'
         dragElement = this;
     }
 
     function handleDragOver(e) {
+        if (currentList.sortMethod !== 'custom') return;
         e.preventDefault();
         let lastTask = getLastTaskHTML();
 
@@ -271,6 +273,7 @@ const dragAndDropHandler = (() => {
     }
 
     function handleDragLeave(e) {
+        if (currentList.sortMethod !== 'custom') return;
         // Add border to last element bottom when outside of droppable area
         let lastTask = getLastTaskHTML();
 
@@ -281,6 +284,7 @@ const dragAndDropHandler = (() => {
     }
 
     function handleDragEnd(e) {
+        if (currentList.sortMethod !== 'custom') return;
         let lastTask = getLastTaskHTML();
         this.style.opacity = '1';
 
@@ -294,6 +298,7 @@ const dragAndDropHandler = (() => {
     }
 
     function handleDrop(e) {
+        if (currentList.sortMethod !== 'custom') return;
         let lastTask = getLastTaskHTML();
         e.stopPropagation();
 
