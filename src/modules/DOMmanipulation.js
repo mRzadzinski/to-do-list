@@ -1,12 +1,13 @@
 import circleIcon from '../img/circle-icon.png';
 import parseISO from 'date-fns/parseISO';
-import { taskLists, currentList, setCurrentList, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks } from './logic';
+import { taskLists, currentList, setCurrentList, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask } from './logic';
 
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
 
 let currentTaskHTML;
 let currentTaskID;
+let moveTaskButtons;
 
 const dateTimeHandler = (() => {
     let currentPicker;
@@ -306,6 +307,7 @@ function addTaskListeners() {
     dragAndDropHandler.addDragDropListeners();
     addToggleCompletedListeners();
     deleteCompletedTaskListeners();
+    addMoveTaskListeners();
 }
 
 const listNameTemplate = document.querySelector('.list-text-template');
@@ -332,6 +334,7 @@ function renderTaskLists() {
         newList.classList.remove('list-text-template');
         newList.classList.add('switch-list');
         newList2.classList.remove('list-text-template');
+        newList2.classList.add('move-task-btn');
 
         taskListBreakLine.before(newList);
         expandElementHandler.taskMenu.append(newList2);
@@ -344,6 +347,7 @@ function renderTaskLists() {
         if (list === currentList) newList2.firstChild.classList.remove('hidden');
     });
     switchListButtons = document.querySelectorAll('.switch-list');
+    moveTaskButtons = document.querySelectorAll('.move-task-btn');
     addSwitchListListeners(switchListButtons);
     renderTaskListHeader(currentList);
 }
@@ -435,6 +439,15 @@ function renderTasks() {
     addTaskListeners();
     sortTasks();
 }
+
+// Move task to different list
+function addMoveTaskListeners() {
+    moveTaskButtons.forEach(button => button.addEventListener('click', () => {
+        let destinationListName = button.lastChild.innerHTML;
+        moveTask(currentTaskID,destinationListName);
+    }));
+}
+
 
 // Delete ongoing task
 const delTaskMenuBtn = document.querySelector('#delete-task-menu-button');

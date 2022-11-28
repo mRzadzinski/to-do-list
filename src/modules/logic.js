@@ -106,11 +106,11 @@ const addTaskText = document.querySelector('#add-task-text');
 
 [addTaskIcon, addTaskText].forEach(element => element.addEventListener('click', () => {
     let newTaskName = generateRandomString();
-    let uniqueCheck = ensureUniqueName(newTaskName);
+    let uniqueCheck = getUniqueName(newTaskName);
 
     while (uniqueCheck === false) {
         newTaskName = generateRandomString();
-        uniqueCheck = ensureUniqueName(newTaskName);
+        uniqueCheck = getUniqueName(newTaskName);
     }
 
     if (currentList.sortMethod === 'custom') {
@@ -121,14 +121,17 @@ const addTaskText = document.querySelector('#add-task-text');
     renderTasks();
 }));
 
-function ensureUniqueName(newTaskName) {
+function getUniqueName(newTaskName) {
     let unique = true;
-    for (let task in currentList.tasks) {
-        if (currentList.tasks[task].name === newTaskName) {
-            console.log('same')
-            unique = false;
+
+    for (let list in taskLists) {
+        for (let task in list.tasks) {
+            if (currentList.tasks[task].name === newTaskName) {
+                unique = false;
+            }
         }
     }
+
     return unique;
 }
 
@@ -161,10 +164,12 @@ function deleteTask(taskID) {
 }
 
 function refreshTasksID() {
-    let counter = 0;
-    for (let prop in currentList.tasks) {
-        currentList.tasks[prop].id = counter;        
-        counter++;
+    for (let list in taskLists) {
+        let counter = 0;
+        for (let task in list.tasks) {
+            list.tasks[task].id = counter;        
+            counter++;
+        }
     }
 }
 
@@ -197,8 +202,24 @@ function deleteCompletedTasks() {
 
 // Move task to different list
 
-function moveTask(taskID, destinationList) {
-    
+function moveTask(taskID, destinationListName) {
+    let destinationList;
+
+    taskLists.forEach(list => {
+        if (list.name === destinationListName) {
+            destinationList = list;
+        }
+    });
+ 
+    for (let task in currentList.tasks) {
+        if (currentList.tasks[task].id === +taskID) {
+            // Copy task to destination list
+            destinationList.tasks[task] = currentList.tasks[task];
+            delete currentList.tasks[task];
+        }
+    }
+    refreshTasksID();
+    renderTasks();
 }
 
 
@@ -262,5 +283,5 @@ function getSortedTaskArray() {
 }
 
 
-export { increaseTasksPosition as updateTasksPosition, currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks };
+export { increaseTasksPosition as updateTasksPosition, currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask };
 
