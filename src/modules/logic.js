@@ -51,14 +51,27 @@ const renameListInput = document.querySelector('#rename-list-input');
 
 addListDoneBtn.addEventListener('click', () => {
     if (newListInput.value) {
-        let newList = List(newListInput.value);
-        newListInput.value = '';
-        taskLists.push(newList);
-        currentList = newList;
+        // Ensure unique list name
+        let unique = true;
+        taskLists.forEach(list => {
+            if (list.name === newListInput.value) {
+                unique = false;
+                newListInput.setCustomValidity('Choose unique list name.');
+                newListInput.reportValidity();
+            }
+        });
+        if (unique === true) {
+            let newList = List(newListInput.value);
+            newListInput.value = '';
+            taskLists.push(newList);
+            currentList = newList;
+    
+            renderTaskLists();
+            renderTasks();
+            modals.forEach(modal => modal.classList.add('hidden'));
+        } else {
 
-        renderTaskLists();
-        renderTasks();
-        modals.forEach(modal => modal.classList.add('hidden'));
+        }
     }
 });
 
@@ -100,7 +113,9 @@ const addTaskText = document.querySelector('#add-task-text');
         uniqueCheck = ensureUniqueName(newTaskName);
     }
 
-    // updateTasksPosition('plus');
+    if (currentList.sortMethod === 'custom') {
+        increaseTasksPosition();
+    }
     currentList.tasks[newTaskName] = Task('', '', '', '', 1, false);
     refreshTasksID();
     renderTasks();
@@ -126,14 +141,10 @@ function generateRandomString() {
     return result;
 }
 
-function updateTasksPosition(plusOrMin) {
+function increaseTasksPosition() {
     for (const prop in currentList.tasks) {
         if (prop && typeof currentList.tasks[prop] == 'object') {
-            if (plusOrMin === 'plus') {
-                weekend.tasks[prop].position++;
-            } else if (plusOrMin === 'minus') {
-                weekend.tasks[prop].position--;
-            }
+            weekend.tasks[prop].position++;
         }
     }
 }
@@ -183,6 +194,13 @@ function deleteCompletedTasks() {
     }
     renderTasks();
 }
+
+// Move task to different list
+
+function moveTask(taskID, destinationList) {
+    
+}
+
 
 // Sort
 const sortNameBtn = document.querySelector('#sort-name-btn');
@@ -244,5 +262,5 @@ function getSortedTaskArray() {
 }
 
 
-export { updateTasksPosition, currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks };
+export { increaseTasksPosition as updateTasksPosition, currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks };
 

@@ -71,7 +71,7 @@
         <div id="add-list-modal" class="modal hidden">
             <div class="modal-content">
                 <div class="modal-title">Create new list</div>
-                <input id="new-list-input" type="text" placeholder="Enter name" minlength="1">
+                <input id="new-list-input" type="text" placeholder="Enter name" minlength="1" oninput="this.setCustomValidity('')">
                 <div class="modal-buttons">
                     <div class="button cancel-btn">Cancel</div>
                     <div id="add-list-done-btn" class="button done-btn">Done</div>
