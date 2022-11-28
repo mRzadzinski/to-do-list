@@ -1,6 +1,6 @@
 import circleIcon from '../img/circle-icon.png';
 import parseISO from 'date-fns/parseISO';
-import { taskLists, currentList, setCurrentList, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask } from './logic';
+import { taskLists, currentList, setCurrentList, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask, handleDropPosition, getLastTaskID } from './logic';
 
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
@@ -237,11 +237,12 @@ const expandElementHandler = (() => {
 const dragAndDropHandler = (() => {
     let dragElement;
 
-    addDragDropListeners();
+    document.addEventListener('DOMContentLoaded', addDragDropListeners);
+
     function addDragDropListeners() {
         const allTasks = document.querySelectorAll('.task');
 
-        document.addEventListener('DOMContentLoaded', (e) => {    
+        if (currentList.sortMethod === 'custom') {
             allTasks.forEach(task => {
                 task.addEventListener('dragstart', handleDragStart);
                 task.addEventListener('dragover', handleDragOver);
@@ -249,7 +250,7 @@ const dragAndDropHandler = (() => {
                 task.addEventListener('dragend', handleDragEnd);
                 task.addEventListener('drop', handleDrop);
             });
-        });
+        } 
     }
 
     function handleDragStart(e) {
@@ -259,41 +260,60 @@ const dragAndDropHandler = (() => {
 
     function handleDragOver(e) {
         e.preventDefault();
+        let lastTask = getLastTaskHTML();
 
         // Add / remove borders indicating drop position
         if (e.target.classList.contains('task') && this !== dragElement) {
             this.classList.add('dragover-top-border');
-            dragElement.parentNode.lastChild.classList.remove('dragover-bottom-border');
+            lastTask.classList.remove('dragover-bottom-border');
         }
         return false;
     }
 
     function handleDragLeave(e) {
         // Add border to last element bottom when outside of droppable area
+        let lastTask = getLastTaskHTML();
+
         this.classList.remove('dragover-top-border');
-        dragElement.parentNode.lastChild.classList.add('dragover-bottom-border');
+        if (dragElement !== lastTask) {
+            lastTask.classList.add('dragover-bottom-border');
+        }
     }
 
     function handleDragEnd(e) {
-        let lastTask = this.parentNode.lastChild;
+        let lastTask = getLastTaskHTML();
         this.style.opacity = '1';
 
         // Move task to end when dropping it outside of droppable area
         if (dragElement !== lastTask && lastTask.classList.contains('dragover-bottom-border')) {
-            lastTask.after(dragElement);
+            let dragElementOrder = +dragElement.style.order;
+            handleDropPosition('end', dragElementOrder);
         }
         const allTasks = document.querySelectorAll('.task');
         allTasks.forEach(task => task.classList.remove('dragover-top-border', 'dragover-bottom-border'));
     }
 
     function handleDrop(e) {
-        let lastTask = this.parentNode.lastChild;
+        let lastTask = getLastTaskHTML();
         e.stopPropagation();
 
         if (dragElement !== this && !lastTask.classList.contains('dragover-bottom-border')) {
             this.before(dragElement);
         }
         return false;
+    }
+
+    function getLastTaskHTML() {
+        const allTasks = document.querySelectorAll('.task');
+        let lastTaskID = getLastTaskID();
+        let lastTask;
+
+        allTasks.forEach(task => {
+            if (+task.dataset.id === lastTaskID) {
+                lastTask = task;
+            }
+        });
+        return lastTask;
     }
 
     return { addDragDropListeners };

@@ -20,7 +20,7 @@ function createDefaultList() { taskLists.push(List('Quests')) }
 // Dummy content START
 let weekend = List('Weekend');
 let dance = Task(1, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
-let sleep = Task(2, 'Sleep', 'Deep', '2022-12-26T11:11', 2, true);
+let sleep = Task(2, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
 let eat = Task(3, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
 
 taskLists.push(weekend);
@@ -288,6 +288,46 @@ function getSortedTaskArray() {
     return currentListArray;
 }
 
+function handleDropPosition(newPosition, taskToMovePosition, relativeTaskID) {
+    let sortedTasksArray = getSortedTaskArray();
 
-export { currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask };
+    if (newPosition === 'before') {
+
+
+    } else if (newPosition === 'end'){
+        for (let task in currentList.tasks) {
+            if (currentList.tasks[task].position === taskToMovePosition) {
+
+                // Decrement position of tasks after moved element
+                sortedTasksArray.forEach(task => {
+                    if (task[1].position > taskToMovePosition) {
+                        task[1].position--;
+                    }
+                });
+                // Set it as last task
+                currentList.tasks[task].position = Object.keys(currentList.tasks).length;
+
+                sortedTasksArray = getSortedTaskArray();
+                console.log(sortedTasksArray[0], sortedTasksArray[1], sortedTasksArray[2]);                
+                break;
+            }
+        }
+    }
+    updateTasksOrder(sortedTasksArray);
+}
+
+function getLastTaskID() {
+    let currentListArray = Object.entries(currentList.tasks);
+
+    currentListArray.sort((a, b) => {
+        let aa = a[1].position;
+        let bb = b[1].position;
+
+        return bb - aa;
+    });
+    return currentListArray[0][1].id;
+}
+
+
+export { currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask, handleDropPosition, getLastTaskID };
 
