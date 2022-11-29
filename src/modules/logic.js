@@ -30,7 +30,7 @@ weekend.tasks.eat = eat;
 
 let week = List('Week');
 let work = Task(1, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
-let hurry = Task(2, 'Hurry', 'Catch a bus', '2023-09-26T10:11', 2, false);
+let hurry = Task(2, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
 let cry = Task(3, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, true);
 
 taskLists.push(week);
@@ -216,6 +216,7 @@ function moveTask(taskID, destinationListName) {
             // Position as a last element in new location
             destinationList.tasks[task].position = Object.keys(destinationList.tasks).length;
             delete currentList.tasks[task];
+            break;
         }
     }
     refreshTasksID();
@@ -288,16 +289,40 @@ function getSortedTaskArray() {
     return currentListArray;
 }
 
-function handleDropPosition(newPosition, taskToMovePosition, relativeTaskID) {
+function handleDropPosition(newPosition, taskToMovePosition, dropTargetPosition) {
     let sortedTasksArray = getSortedTaskArray();
 
     if (newPosition === 'before') {
+        let taskToMove;
+        let dropTarget;
+        for (let task in currentList.tasks) {
+            if (currentList.tasks[task].position === taskToMovePosition) {
+                taskToMove = currentList.tasks[task];
+            }
+            if (currentList.tasks[task].position === dropTargetPosition) {
+                dropTarget = currentList.tasks[task];
+            }
+        }
 
+        sortedTasksArray.forEach(task => {
+            if (taskToMovePosition > dropTargetPosition) {
+                if (task[1].position >= dropTargetPosition && task[1].position < taskToMovePosition) {
+                    task[1].position++;
+                    taskToMove.position = dropTargetPosition;
+                }
+            } else if (taskToMovePosition < dropTargetPosition) {
+                if (task[1].position > taskToMovePosition && task[1].position < dropTargetPosition) {
+                    task[1].position--;
+                    taskToMove.position = dropTargetPosition - 1;
+                }
+            }
+        });
+        sortedTasksArray = getSortedTaskArray();
+        
 
     } else if (newPosition === 'end'){
         for (let task in currentList.tasks) {
             if (currentList.tasks[task].position === taskToMovePosition) {
-
                 // Decrement position of tasks after moved element
                 sortedTasksArray.forEach(task => {
                     if (task[1].position > taskToMovePosition) {
@@ -308,7 +333,6 @@ function handleDropPosition(newPosition, taskToMovePosition, relativeTaskID) {
                 currentList.tasks[task].position = Object.keys(currentList.tasks).length;
 
                 sortedTasksArray = getSortedTaskArray();
-                console.log(sortedTasksArray[0], sortedTasksArray[1], sortedTasksArray[2]);                
                 break;
             }
         }

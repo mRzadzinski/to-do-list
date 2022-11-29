@@ -253,7 +253,7 @@ const dragAndDropHandler = (() => {
         } 
     }
 
-    function handleDragStart(e) {
+    function handleDragStart() {
         if (currentList.sortMethod !== 'custom') return;
         this.style.opacity = '.5'
         dragElement = this;
@@ -272,7 +272,7 @@ const dragAndDropHandler = (() => {
         return false;
     }
 
-    function handleDragLeave(e) {
+    function handleDragLeave() {
         if (currentList.sortMethod !== 'custom') return;
         // Add border to last element bottom when outside of droppable area
         let lastTask = getLastTaskHTML();
@@ -283,7 +283,7 @@ const dragAndDropHandler = (() => {
         }
     }
 
-    function handleDragEnd(e) {
+    function handleDragEnd() {
         if (currentList.sortMethod !== 'custom') return;
         let lastTask = getLastTaskHTML();
         this.style.opacity = '1';
@@ -300,10 +300,16 @@ const dragAndDropHandler = (() => {
     function handleDrop(e) {
         if (currentList.sortMethod !== 'custom') return;
         let lastTask = getLastTaskHTML();
+        let dragElementOrder = +dragElement.style.order;
+        let dropTargetOrder = +this.style.order;
+    
         e.stopPropagation();
 
         if (dragElement !== this && !lastTask.classList.contains('dragover-bottom-border')) {
-            this.before(dragElement);
+            
+            handleDropPosition('before', dragElementOrder, dropTargetOrder);
+
+
         }
         return false;
     }
@@ -332,7 +338,6 @@ function addTaskListeners() {
     dragAndDropHandler.addDragDropListeners();
     addToggleCompletedListeners();
     deleteCompletedTaskListeners();
-    addMoveTaskListeners();
 }
 
 const listNameTemplate = document.querySelector('.list-text-template');
@@ -375,6 +380,7 @@ function renderTaskLists() {
     moveTaskButtons = document.querySelectorAll('.move-task-btn');
     addSwitchListListeners(switchListButtons);
     renderTaskListHeader(currentList);
+    addMoveTaskListeners();
 }
 
 function addSwitchListListeners() {
@@ -394,7 +400,6 @@ function switchList(button) {
             renderTasks();
         }
     });
-    console.log(currentList)
 }
 
 // Render task list header
@@ -470,7 +475,7 @@ function renderTasks() {
 function addMoveTaskListeners() {
     moveTaskButtons.forEach(button => button.addEventListener('click', () => {
         let destinationListName = button.lastChild.innerHTML;
-        moveTask(currentTaskID,destinationListName);
+        moveTask(currentTaskID, destinationListName);
     }));
 }
 
