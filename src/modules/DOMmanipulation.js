@@ -222,6 +222,9 @@ const expandElementHandler = (() => {
                 if (task.contains(event.target) && !task.classList.contains('completed') 
                 && !event.target.classList.contains('more-icon')) {
                     task.classList.add('task-clicked');
+                // Keep new task expanded
+                } else if (event.target.parentNode.classList.contains('add-task') && +task.style.order === 1) {
+                    // Do nothing
                 } else {
                     task.classList.remove('task-clicked');
                 }
@@ -412,14 +415,17 @@ const taskTemplate = document.querySelector('.task-template');
 const completedList = document.querySelector('.completed-list');
 const completedTaskTemplate = document.querySelector('.completed-task-template');
 
-function createTaskHTML() {
-    let newTask = taskTemplate.cloneNode(true);
-    newTask.classList.remove('task-template');
-    tasksContainer.prepend(newTask);
-    addTaskListeners();
+function selectNewTask() {
+    const allTasks = document.querySelectorAll('.task');
 
-    return newTask;
+    allTasks.forEach(task => {
+        if (+task.style.order === 1) {
+            task.classList.add('task-clicked')
+            task.children[0].children[1].children[1].focus();
+        }
+    });
 }
+
 renderTasks();
 function renderTasks() {
     tasksContainer.innerHTML = '';
@@ -569,4 +575,4 @@ modalCancelButtons.forEach(button => button.addEventListener('click', () => {
 createListBtn.onclick = () => addListModal.classList.remove('hidden');
 renameListBtn.onclick = () => renameListModal.classList.remove('hidden');
 
-export { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, modals };
+export { selectNewTask, addTaskListeners, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, modals };

@@ -1,4 +1,4 @@
-import { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, modals } from './DOMmanipulation';
+import { renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, modals, selectNewTask } from './DOMmanipulation';
 
 // Objects
 const List = (name) => {
@@ -117,6 +117,7 @@ const addTaskText = document.querySelector('#add-task-text');
     currentList.tasks[newTaskName] = Task('', '', '', '', 1, false);
     refreshTasksID();
     renderTasks();
+    selectNewTask();
 }));
 
 function getUniqueName(newTaskName) {
