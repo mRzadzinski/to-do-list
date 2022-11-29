@@ -1,42 +1,104 @@
 import { renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, modals, selectNewTask } from './DOMmanipulation';
 
+// Local storage
+
+let localStorageWorks;
+if (storageAvailable('localStorage')) {
+    localStorageWorks = true;
+  }
+  else {
+    localStorageWorks = false;
+  }
+
+function storageAvailable(type) {
+    let storage;
+    try {
+        storage = window[type];
+        const x = '__storage_test__';
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
+    }
+    catch (e) {
+        return e instanceof DOMException && (
+            // everything except Firefox
+            e.code === 22 ||
+            // Firefox
+            e.code === 1014 ||
+            // test name field too, because code might not be present
+            // everything except Firefox
+            e.name === 'QuotaExceededError' ||
+            // Firefox
+            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            (storage && storage.length !== 0);
+    }
+}
+
+let storageIsEmpty;
+function loadLocalStorage() {
+    if (!localStorage.getItem('taskLists')) {
+        storageIsEmpty = true;
+        return;
+    } else {
+        storageIsEmpty = false;
+        taskLists = JSON.parse(localStorage.getItem('taskLists'));
+        currentList = JSON.parse(localStorage.getItem('currentList'));
+    }
+}
+
+function saveToLocalStorage() {
+    if (!localStorageWorks) {
+        return;
+
+    } else if (localStorageWorks) {
+        localStorage.clear();
+        localStorage.setItem("taskLists", JSON.stringify(taskLists));
+        localStorage.setItem("currentList", JSON.stringify(currentList));
+    }
+}
+
 // Objects
+
+let taskLists = [];
+let currentList;
+loadLocalStorage();
+
 const List = (name) => {
     let sortMethod = 'custom';
     let tasks = {}
     return { name, sortMethod, tasks }
 };
 
-
 const Task = (id, name, details, dateTime, position, completed) => {
     return { id, name, details, dateTime, position, completed };
 };
 
-const taskLists = [];
-let currentList;
 function setCurrentList(list) { currentList = list };
 function createDefaultList() { taskLists.push(List('Quests')) }
 
 // Dummy content START
-let weekend = List('Weekend');
-let dance = Task(1, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
-let sleep = Task(2, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
-let eat = Task(3, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
+if (storageIsEmpty) {
+    let weekend = List('Weekend');
+    let dance = Task(1, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
+    let sleep = Task(2, 'Sleep', 'Deep', '2022-12-26T11:11', 2, true);
+    let eat = Task(3, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
 
-taskLists.push(weekend);
-weekend.tasks.dance = dance;
-weekend.tasks.sleep = sleep;
-weekend.tasks.eat = eat;
+    taskLists.push(weekend);
+    weekend.tasks.dance = dance;
+    weekend.tasks.sleep = sleep;
+    weekend.tasks.eat = eat;
 
-let week = List('Week');
-let work = Task(1, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
-let hurry = Task(2, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
-let cry = Task(3, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, true);
+    let week = List('Week');
+    let work = Task(1, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
+    let hurry = Task(2, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
+    let cry = Task(3, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, true);
 
-taskLists.push(week);
-week.tasks.work = work;
-week.tasks.hurry = hurry;
-week.tasks.cry = cry;
+    taskLists.push(week);
+    week.tasks.work = work;
+    week.tasks.hurry = hurry;
+    week.tasks.cry = cry;
+}
 // Dummy content END
 
 if (!currentList) {
@@ -69,9 +131,8 @@ addListDoneBtn.addEventListener('click', () => {
             renderTaskLists();
             renderTasks();
             modals.forEach(modal => modal.classList.add('hidden'));
-        } else {
-
         }
+        saveToLocalStorage();
     }
 });
 
@@ -84,6 +145,8 @@ renameDoneBtn.addEventListener('click', () => {
         renderTaskLists();
         renderTasks();
         modals.forEach(modal => modal.classList.add('hidden'));
+
+        saveToLocalStorage();
     }
 });
 
@@ -97,6 +160,7 @@ deleteListButton.onclick = () => {
 
     renderTaskLists();
     renderTasks();
+    saveToLocalStorage();
 };
 
 
@@ -115,9 +179,12 @@ const addTaskText = document.querySelector('#add-task-text');
 
     increaseTasksPosition();
     currentList.tasks[newTaskName] = Task('', '', '', '', 1, false);
+    console.log(currentList.tasks)
     refreshTasksID();
+    console.log(currentList.tasks)
     renderTasks();
     selectNewTask();
+    saveToLocalStorage();
 }));
 
 function getUniqueName(newTaskName) {
@@ -152,7 +219,6 @@ function increaseTasksPosition() {
 }
 
 // Delete task
-
 function deleteTask(taskID) {
     for (let task in currentList.tasks) {
         if (currentList.tasks[task].id == taskID) {
@@ -160,12 +226,14 @@ function deleteTask(taskID) {
         }
     }
     refreshTasksID();
+    saveToLocalStorage();
 }
 
 function refreshTasksID() {
     taskLists.forEach(list => {
         let counter = 0;
         for (let task in list.tasks) {
+            console.log(list.tasks[task])
             list.tasks[task].id = counter;      
             counter++;
         }
@@ -183,6 +251,7 @@ function toggleCompletedStatus(taskID) {
             }
         }
     }
+    saveToLocalStorage();
 }
 
 // Delete completed tasks
@@ -197,6 +266,7 @@ function deleteCompletedTasks() {
         }
     }
     renderTasks();
+    saveToLocalStorage();
 }
 
 // Move task to different list
@@ -222,6 +292,7 @@ function moveTask(taskID, destinationListName) {
     }
     refreshTasksID();
     renderTasks();
+    saveToLocalStorage();
 }
 
 
@@ -249,6 +320,7 @@ function sortTasks() {
     toggleSortCheckIcon();
     let sortedArray = getSortedTaskArray();
     updateTasksOrder(sortedArray);
+    saveToLocalStorage();
 }
 
 function getSortedTaskArray() {
@@ -295,7 +367,6 @@ function handleDropPosition(newPosition, taskToMovePosition, dropTargetPosition)
 
     if (newPosition === 'before') {
         let taskToMove;
-        let dropTarget;
         for (let task in currentList.tasks) {
             if (currentList.tasks[task].position === taskToMovePosition) {
                 taskToMove = currentList.tasks[task];
@@ -339,6 +410,7 @@ function handleDropPosition(newPosition, taskToMovePosition, dropTargetPosition)
         }
     }
     updateTasksOrder(sortedTasksArray);
+    saveToLocalStorage();
 }
 
 function getLastTaskID() {
@@ -353,6 +425,4 @@ function getLastTaskID() {
     return currentListArray[0][1].id;
 }
 
-
-export { currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask, handleDropPosition, getLastTaskID };
-
+export { saveToLocalStorage, currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask, handleDropPosition, getLastTaskID };

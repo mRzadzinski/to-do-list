@@ -1,6 +1,6 @@
 import circleIcon from '../img/circle-icon.png';
 import parseISO from 'date-fns/parseISO';
-import { taskLists, currentList, setCurrentList, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask, handleDropPosition, getLastTaskID } from './logic';
+import { saveToLocalStorage, taskLists, currentList, setCurrentList, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask, handleDropPosition, getLastTaskID } from './logic';
 
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
@@ -50,6 +50,7 @@ const dateTimeHandler = (() => {
             } 
         }
         myTask.dateTime = date;
+        saveToLocalStorage();
 
         if (dateTime.includes('Invalid')) {
             destination.innerHTML = 'Date / time';
@@ -120,6 +121,7 @@ const textInputHandler = (() => {
                 } else if (dataSrc === 'task-details') {
                     myTask.details = textAreas[i].value;
                 }
+                saveToLocalStorage();
 
                 // Update HTML
                 textAreas[i].innerHTML = textAreas[i].value;
