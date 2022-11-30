@@ -1,5 +1,69 @@
 import { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, modals } from './DOMmanipulation';
 
+// Local storage
+let localStorageWorks;
+if (storageAvailable('localStorage')) {
+    localStorageWorks = true;
+  }
+  else {
+    localStorageWorks = false;
+  }
+
+function storageAvailable(type) {
+    let storage;
+    try {
+        storage = window[type];
+        const x = '__storage_test__';
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
+    }
+    catch (e) {
+        return e instanceof DOMException && (
+            // everything except Firefox
+            e.code === 22 ||
+            // Firefox
+            e.code === 1014 ||
+            // test name field too, because code might not be present
+            // everything except Firefox
+            e.name === 'QuotaExceededError' ||
+            // Firefox
+            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            (storage && storage.length !== 0);
+    }
+}
+
+let storageIsEmpty;
+function loadLocalStorage() {
+    if (!localStorage.getItem('taskLists')) {
+        storageIsEmpty = true;
+        return;
+    } else {
+        storageIsEmpty = false;
+        taskLists = JSON.parse(localStorage.getItem('taskLists'));
+
+        let loadedCurrentListName = JSON.parse(localStorage.getItem('currentListName'));
+        taskLists.forEach(list => {
+            if (list.name === loadedCurrentListName) {
+                currentList = list;
+            }
+        });
+    }
+}
+
+function saveToLocalStorage() {
+    if (!localStorageWorks) {
+        return;
+
+    } else if (localStorageWorks) {
+        localStorage.clear();
+        localStorage.setItem("taskLists", JSON.stringify(taskLists));
+        localStorage.setItem("currentListName", JSON.stringify(currentList.name));
+    }
+}
+
+
 // Objects
 const List = (name) => {
     let sortMethod = 'custom';
@@ -12,31 +76,36 @@ const Task = (id, name, details, dateTime, position, completed) => {
     return { id, name, details, dateTime, position, completed };
 };
 
-const taskLists = [];
+localStorage.clear()
+let taskLists = [];
 let currentList;
+loadLocalStorage();
+
 function setCurrentList(list) { currentList = list };
 function createDefaultList() { taskLists.push(List('Quests')) }
 
 // Dummy content START
-let weekend = List('Weekend');
-let dance = Task(1, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
-let sleep = Task(2, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
-let eat = Task(3, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
-
-taskLists.push(weekend);
-weekend.tasks.dance = dance;
-weekend.tasks.sleep = sleep;
-weekend.tasks.eat = eat;
-
-let week = List('Week');
-let work = Task(1, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
-let hurry = Task(2, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
-let cry = Task(3, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, true);
-
-taskLists.push(week);
-week.tasks.work = work;
-week.tasks.hurry = hurry;
-week.tasks.cry = cry;
+if (storageIsEmpty) {
+    let weekend = List('Weekend');
+    let dance = Task(1, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
+    let sleep = Task(2, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
+    let eat = Task(3, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
+    
+    taskLists.push(weekend);
+    weekend.tasks.dance = dance;
+    weekend.tasks.sleep = sleep;
+    weekend.tasks.eat = eat;
+    
+    let week = List('Week');
+    let work = Task(1, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
+    let hurry = Task(2, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
+    let cry = Task(3, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, true);
+    
+    taskLists.push(week);
+    week.tasks.work = work;
+    week.tasks.hurry = hurry;
+    week.tasks.cry = cry;
+}
 // Dummy content END
 
 if (!currentList) {
@@ -208,6 +277,8 @@ function moveTask(taskID, destinationListName) {
             destinationList = list;
         }
     });
+
+    if (currentList === destinationList) return;
  
     for (let task in currentList.tasks) {
         if (currentList.tasks[task].id === +taskID) {
