@@ -225,7 +225,7 @@ function increaseTasksPosition() {
 
 function deleteTask(taskID) {
     for (let task in currentList.tasks) {
-        if (currentList.tasks[task].id == taskID) {
+        if (currentList.tasks[task].id === +taskID) {
             delete currentList.tasks[task];
         }
     }

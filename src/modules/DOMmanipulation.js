@@ -485,9 +485,8 @@ function addMoveTaskListeners() {
 // Delete ongoing task
 const delTaskMenuBtn = document.querySelector('#delete-task-menu-button');
 delTaskMenuBtn.onclick = () => {
-    currentTaskHTML.remove();
-        deleteTask(currentTaskID);
-        renderTasks();
+    deleteTask(currentTaskID);
+    renderTasks();
 };
 
 // Delete completed task
