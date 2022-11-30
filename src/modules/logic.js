@@ -89,11 +89,15 @@ if (storageIsEmpty) {
     let dance = Task(0, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
     let sleep = Task(1, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
     let eat = Task(2, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
+    let cook = Task(3, 'Cook', 'Sushi', '2022-10-07T01:11', 4, true);
+    let laze = Task(4, 'Laze', 'As much as you can', '2022-02-07T01:11', 5, false);
     
     taskLists.push(weekend);
     weekend.tasks.dance = dance;
     weekend.tasks.sleep = sleep;
     weekend.tasks.eat = eat;
+    weekend.tasks.cook = cook;
+    weekend.tasks.laze = laze;
     
     let week = List('Week');
     let work = Task(0, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
