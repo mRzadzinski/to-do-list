@@ -86,9 +86,9 @@ function createDefaultList() { taskLists.push(List('Quests')) }
 // Dummy content START
 if (storageIsEmpty) {
     let weekend = List('Weekend');
-    let dance = Task(1, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
-    let sleep = Task(2, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
-    let eat = Task(3, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
+    let dance = Task(0, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
+    let sleep = Task(1, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
+    let eat = Task(2, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
     
     taskLists.push(weekend);
     weekend.tasks.dance = dance;
@@ -96,9 +96,9 @@ if (storageIsEmpty) {
     weekend.tasks.eat = eat;
     
     let week = List('Week');
-    let work = Task(1, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
-    let hurry = Task(2, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
-    let cry = Task(3, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, true);
+    let work = Task(0, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
+    let hurry = Task(1, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
+    let cry = Task(2, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, true);
     
     taskLists.push(week);
     week.tasks.work = work;
@@ -206,7 +206,7 @@ function getUniqueName(newTaskName) {
 function generateRandomString() {
     let result = '';
     let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for ( let i = 0; i < 7; i++) {
+    for ( let i = 0; i < 5; i++) {
         result += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     return result;
@@ -366,21 +366,22 @@ function getSortedTaskArray() {
     return currentListArray;
 }
 
-function handleDropPosition(newPosition, taskToMovePosition, dropTargetPosition) {
+function handleDropPosition(newPosition, taskToMoveID, dropTargetID) {
     let sortedTasksArray = getSortedTaskArray();
+    let taskToMove;
+    let taskToMovePosition;
+    let dropTargetPosition;
+
+    for (let task in currentList.tasks) {
+        if (currentList.tasks[task].id === +taskToMoveID) {
+            taskToMove = currentList.tasks[task];
+            taskToMovePosition = currentList.tasks[task].position;
+        } else if (currentList.tasks[task].id === +dropTargetID) {
+            dropTargetPosition = currentList.tasks[task].position;
+        }
+    }
 
     if (newPosition === 'before') {
-        let taskToMove;
-        let dropTarget;
-        for (let task in currentList.tasks) {
-            if (currentList.tasks[task].position === taskToMovePosition) {
-                taskToMove = currentList.tasks[task];
-            }
-            if (currentList.tasks[task].position === dropTargetPosition) {
-                dropTarget = currentList.tasks[task];
-            }
-        }
-
         sortedTasksArray.forEach(task => {
             if (taskToMovePosition > dropTargetPosition) {
                 if (task[1].position >= dropTargetPosition && task[1].position < taskToMovePosition) {

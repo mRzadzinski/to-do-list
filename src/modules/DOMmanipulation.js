@@ -292,8 +292,8 @@ const dragAndDropHandler = (() => {
 
         // Move task to end when dropping it outside of droppable area
         if (dragElement !== lastTask && lastTask.classList.contains('dragover-bottom-border')) {
-            let dragElementOrder = +dragElement.style.order;
-            handleDropPosition('end', dragElementOrder);
+            let dragElementID = +dragElement.dataset.id;
+            handleDropPosition('end', dragElementID);
         }
         const allTasks = document.querySelectorAll('.task');
         allTasks.forEach(task => task.classList.remove('dragover-top-border', 'dragover-bottom-border'));
@@ -302,14 +302,15 @@ const dragAndDropHandler = (() => {
     function handleDrop(e) {
         if (currentList.sortMethod !== 'custom') return;
         let lastTask = getLastTaskHTML();
-        let dragElementOrder = +dragElement.style.order;
-        let dropTargetOrder = +this.style.order;
-    
+        let dragElementID = +dragElement.dataset.id;
+        let dropTargetID = +this.dataset.id;
+
+
         e.stopPropagation();
 
         if (dragElement !== this && !lastTask.classList.contains('dragover-bottom-border')) {
             
-            handleDropPosition('before', dragElementOrder, dropTargetOrder);
+            handleDropPosition('before', dragElementID, dropTargetID);
 
 
         }
@@ -507,9 +508,9 @@ function deleteCompletedTaskListeners() {
 function addToggleCompletedListeners() {
     const toggleCompletedButtons = document.querySelectorAll('.toggle-completed-btn');
     toggleCompletedButtons.forEach(button => button.addEventListener('click', () => {
-        let currentTaskHTML = button.parentNode.parentNode.parentNode;
-        let currentTaskID = currentTaskHTML.dataset.id
-        toggleCompletedStatus(currentTaskID);
+        let taskHTML = button.parentNode.parentNode.parentNode;
+        let taskID = taskHTML.dataset.id
+        toggleCompletedStatus(taskID);
         renderTasks();
         // Reset completed list height
         expandElementHandler.expandElement(completedList);
