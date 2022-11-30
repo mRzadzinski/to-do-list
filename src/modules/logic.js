@@ -76,7 +76,6 @@ const Task = (id, name, details, dateTime, position, completed) => {
     return { id, name, details, dateTime, position, completed };
 };
 
-localStorage.clear()
 let taskLists = [];
 let currentList;
 loadLocalStorage();
@@ -137,9 +136,8 @@ addListDoneBtn.addEventListener('click', () => {
     
             renderTaskLists();
             renderTasks();
+            saveToLocalStorage();
             modals.forEach(modal => modal.classList.add('hidden'));
-        } else {
-
         }
     }
 });
@@ -152,6 +150,7 @@ renameDoneBtn.addEventListener('click', () => {
 
         renderTaskLists();
         renderTasks();
+        saveToLocalStorage();
         modals.forEach(modal => modal.classList.add('hidden'));
     }
 });
@@ -166,6 +165,7 @@ deleteListButton.onclick = () => {
 
     renderTaskLists();
     renderTasks();
+    saveToLocalStorage();
 };
 
 
@@ -186,6 +186,7 @@ const addTaskText = document.querySelector('#add-task-text');
     currentList.tasks[newTaskName] = Task('', '', '', '', 1, false);
     refreshTasksID();
     renderTasks();
+    saveToLocalStorage();
 }));
 
 function getUniqueName(newTaskName) {
@@ -217,6 +218,7 @@ function increaseTasksPosition() {
             currentList.tasks[task].position++;
         }
     }
+    saveToLocalStorage();
 }
 
 // Delete task
@@ -228,6 +230,7 @@ function deleteTask(taskID) {
         }
     }
     refreshTasksID();
+    saveToLocalStorage();
 }
 
 function refreshTasksID() {
@@ -251,6 +254,7 @@ function toggleCompletedStatus(taskID) {
             }
         }
     }
+    saveToLocalStorage();
 }
 
 // Delete completed tasks
@@ -265,6 +269,7 @@ function deleteCompletedTasks() {
         }
     }
     renderTasks();
+    saveToLocalStorage();
 }
 
 // Move task to different list
@@ -292,6 +297,7 @@ function moveTask(taskID, destinationListName) {
     }
     refreshTasksID();
     renderTasks();
+    saveToLocalStorage();
 }
 
 
@@ -409,6 +415,7 @@ function handleDropPosition(newPosition, taskToMovePosition, dropTargetPosition)
         }
     }
     updateTasksOrder(sortedTasksArray);
+    saveToLocalStorage();
 }
 
 function getLastTaskID() {
@@ -424,5 +431,5 @@ function getLastTaskID() {
 }
 
 
-export { currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask, handleDropPosition, getLastTaskID };
+export { currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask, handleDropPosition, getLastTaskID, saveToLocalStorage };
 
