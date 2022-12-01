@@ -315,7 +315,7 @@ textarea {
 .completed-list {
     display: none;
     max-height: 0;
-    overflow: hidden;
+    overflow: auto;
     transition: max-height 0.2s ease-out;
     margin-bottom: 4px;
     text-decoration: line-through;
