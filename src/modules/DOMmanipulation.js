@@ -285,20 +285,6 @@ const dragAndDropHandler = (() => {
         }
     }
 
-    function handleDragEnd() {
-        if (currentList.sortMethod !== 'custom') return;
-        let lastTask = getLastTaskHTML();
-        this.style.opacity = '1';
-
-        // Move task to end when dropping it outside of droppable area
-        if (dragElement !== lastTask && lastTask.classList.contains('dragover-bottom-border')) {
-            let dragElementID = +dragElement.dataset.id;
-            handleDropPosition('end', dragElementID);
-        }
-        const allTasks = document.querySelectorAll('.task');
-        allTasks.forEach(task => task.classList.remove('dragover-top-border', 'dragover-bottom-border'));
-    }
-
     function handleDrop(e) {
         if (currentList.sortMethod !== 'custom') return;
         let lastTask = getLastTaskHTML();
@@ -315,6 +301,19 @@ const dragAndDropHandler = (() => {
 
         }
         return false;
+    }
+
+    function handleDragEnd() {
+        if (currentList.sortMethod !== 'custom') return;
+        let lastTask = getLastTaskHTML();
+        this.style.opacity = '1';
+
+        // Move task to end when dropping it outside of droppable area
+        if (dragElement !== lastTask && lastTask.classList.contains('dragover-bottom-border')) {
+            let dragElementID = +dragElement.dataset.id;
+            handleDropPosition('end', dragElementID);
+        }
+        renderTasks();
     }
 
     function getLastTaskHTML() {
@@ -403,6 +402,7 @@ function switchList(button) {
             renderTasks();
         }
     });
+    console.table(currentList.tasks)
 }
 
 // Render task list header

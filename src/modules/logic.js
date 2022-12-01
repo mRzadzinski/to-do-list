@@ -53,14 +53,14 @@ function loadLocalStorage() {
 }
 
 function saveToLocalStorage() {
-    // if (!localStorageWorks) {
-    //     return;
+    if (!localStorageWorks) {
+        return;
 
-    // } else if (localStorageWorks) {
-    //     localStorage.clear();
-    //     localStorage.setItem("taskLists", JSON.stringify(taskLists));
-    //     localStorage.setItem("currentListName", JSON.stringify(currentList.name));
-    // }
+    } else if (localStorageWorks) {
+        // localStorage.clear();
+        // localStorage.setItem("taskLists", JSON.stringify(taskLists));
+        // localStorage.setItem("currentListName", JSON.stringify(currentList.name));
+    }
 }
 
 
@@ -101,12 +101,12 @@ if (storageIsEmpty) {
     
     let week = List('Week');
     let work = Task(0, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
-    let hurry = Task(1, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
+    let layDown = Task(1, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
     let cry = Task(2, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, false);
     
     taskLists.push(week);
     week.tasks.work = work;
-    week.tasks.hurry = hurry;
+    week.tasks.layDown = layDown;
     week.tasks.cry = cry;
 }
 // Dummy content END
@@ -191,6 +191,7 @@ const addTaskText = document.querySelector('#add-task-text');
     refreshTasksID();
     renderTasks();
     saveToLocalStorage();
+    console.table(currentList.tasks)
 }));
 
 function getUniqueName(newTaskName) {
@@ -218,7 +219,7 @@ function generateRandomString() {
 
 function increaseTasksPosition() {
     for (let task in currentList.tasks) {
-        if (task && typeof currentList.tasks[task] === 'object') {
+        if (task && typeof currentList.tasks[task] === 'object' && !currentList.tasks[task].completed) {
             currentList.tasks[task].position++;
         }
     }
@@ -234,7 +235,6 @@ function deleteTask(taskID) {
     for (let task in currentList.tasks) {
         if (currentList.tasks[task].id === +taskID) {
             taskToDeleteName = task;
-            console.log(taskToDeleteName)
         }
     }
     // Handle positioning
@@ -245,8 +245,8 @@ function deleteTask(taskID) {
     }
     delete currentList.tasks[taskToDeleteName];
 
+    console.table(currentList.tasks)
     refreshTasksID();
-    console.log(currentList.tasks)
     saveToLocalStorage();
 }
 
@@ -261,16 +261,28 @@ function refreshTasksID() {
 }
 
 function toggleCompletedStatus(taskID) {
+
     for (let task in currentList.tasks) {
         if (currentList.tasks[task].id == taskID) {
-            
+
             if (currentList.tasks[task].completed === false) {
+                // Handle positioning
+                for (let tk in currentList.tasks) {
+                    if (currentList.tasks[tk].position > currentList.tasks[task].position) {
+                        currentList.tasks[tk].position--;
+                    }
+                }
                 currentList.tasks[task].completed = true
+                currentList.tasks[task].position = '';
+
             } else if (currentList.tasks[task].completed === true) {
+                // Add to ongoing list as last task
+                currentList.tasks[task].position = getSortedTaskArray().length + 1;
                 currentList.tasks[task].completed = false;
             }
         }
     }
+    console.table(currentList.tasks)
     saveToLocalStorage();
 }
 
@@ -285,33 +297,50 @@ function deleteCompletedTasks() {
             delete currentList.tasks[task];
         }
     }
+    console.table(currentList.tasks)
     renderTasks();
     saveToLocalStorage();
 }
 
 // Move task to different list
-
 function moveTask(taskID, destinationListName) {
-    let destinationList;
+    let listPosition;
+    for (let i = 0; i < taskLists.length; i++) {
+        if (taskLists[i].name === destinationListName) {
+            listPosition = i;
+        };
+    }
 
-    taskLists.forEach(list => {
-        if (list.name === destinationListName) {
-            destinationList = list;
-        }
-    });
+    if (currentList === taskLists[listPosition]) return;
 
-    if (currentList === destinationList) return;
- 
     for (let task in currentList.tasks) {
         if (currentList.tasks[task].id === +taskID) {
+
+            let taskPrevPosition = currentList.tasks[task].position;
+
+            // Count ongoing tasks in destination list
+            let positionCounter = 0;
+            Object.entries(taskLists[listPosition].tasks).forEach(task => {
+                if (!task[1].completed) positionCounter++;
+            });
+
+            // Update position of elements in current list
+            for (let t in currentList.tasks) {
+                if (currentList.tasks[t].position > taskPrevPosition) {
+                    currentList.tasks[t].position--;
+                }
+            }
+
             // Copy task to destination list
-            destinationList.tasks[task] = currentList.tasks[task];
-            // Position as a last element in new location
-            destinationList.tasks[task].position = Object.keys(destinationList.tasks).length;
+            taskLists[listPosition].tasks[task] = currentList.tasks[task];
+
+            // Position as last element in new location
+            taskLists[listPosition].tasks[task].position = positionCounter + 1;            
+
             delete currentList.tasks[task];
-            break;
         }
     }
+    console.table(currentList.tasks)
     refreshTasksID();
     renderTasks();
     saveToLocalStorage();
@@ -356,6 +385,9 @@ function getSortedTaskArray() {
 
             return aa < bb ? -1 : aa > bb ? 1 : 0;
         });
+        // Handle completed tasks
+        let ongoingTaskArray = excludeCompleted(currentListArray);
+        return ongoingTaskArray;
 
     } else if (sortMethod === 'date') {
         currentListArray.sort((a, b) => {
@@ -370,6 +402,9 @@ function getSortedTaskArray() {
 
             return aa - bb;
         });
+        // Handle completed tasks
+        let ongoingTaskArray = excludeCompleted(currentListArray);
+        return ongoingTaskArray;
 
     } else if (sortMethod === 'custom') {
         currentListArray.sort((a, b) => {
@@ -378,9 +413,21 @@ function getSortedTaskArray() {
 
             return aa - bb;
         });
-
+        // Handle completed tasks
+        let ongoingTaskArray = excludeCompleted(currentListArray);
+        return ongoingTaskArray;
     }
-    return currentListArray;
+}
+// Helper for getSortedTaskArray function
+function excludeCompleted(currentListArray) {
+    let ongoingTaskArray = [];
+
+    currentListArray.forEach(task => {
+        if (!task[1].completed) {
+            ongoingTaskArray.push(task)
+        }
+    });
+    return ongoingTaskArray;
 }
 
 function handleDropPosition(newPosition, taskToMoveID, dropTargetID) {
@@ -424,16 +471,16 @@ function handleDropPosition(newPosition, taskToMoveID, dropTargetID) {
                         task[1].position--;
                     }
                 });
-                // Set it as last task
-                currentList.tasks[task].position = Object.keys(currentList.tasks).length;
 
-                sortedTasksArray = getSortedTaskArray();
+                // Set it as last task
+                currentList.tasks[task].position = getSortedTaskArray().length;            
                 break;
             }
         }
     }
-    updateTasksOrder(sortedTasksArray);
+;
     saveToLocalStorage();
+    console.table(currentList.tasks)
 }
 
 function getLastTaskID() {
