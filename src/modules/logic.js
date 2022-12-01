@@ -53,14 +53,14 @@ function loadLocalStorage() {
 }
 
 function saveToLocalStorage() {
-    if (!localStorageWorks) {
-        return;
+    // if (!localStorageWorks) {
+    //     return;
 
-    } else if (localStorageWorks) {
-        localStorage.clear();
-        localStorage.setItem("taskLists", JSON.stringify(taskLists));
-        localStorage.setItem("currentListName", JSON.stringify(currentList.name));
-    }
+    // } else if (localStorageWorks) {
+    //     localStorage.clear();
+    //     localStorage.setItem("taskLists", JSON.stringify(taskLists));
+    //     localStorage.setItem("currentListName", JSON.stringify(currentList.name));
+    // }
 }
 
 
@@ -89,7 +89,7 @@ if (storageIsEmpty) {
     let dance = Task(0, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
     let sleep = Task(1, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
     let eat = Task(2, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
-    let cook = Task(3, 'Cook', 'Sushi', '2022-10-07T01:11', 4, true);
+    let cook = Task(3, 'Cook', 'Sushi', '2022-10-07T01:11', 4, false);
     let laze = Task(4, 'Laze', 'As much as you can', '2022-02-07T01:11', 5, false);
     
     taskLists.push(weekend);
@@ -102,7 +102,7 @@ if (storageIsEmpty) {
     let week = List('Week');
     let work = Task(0, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
     let hurry = Task(1, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
-    let cry = Task(2, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, true);
+    let cry = Task(2, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, false);
     
     taskLists.push(week);
     week.tasks.work = work;
@@ -228,12 +228,25 @@ function increaseTasksPosition() {
 // Delete task
 
 function deleteTask(taskID) {
+    let taskToDeleteName;
+
+    // Find task to delete
     for (let task in currentList.tasks) {
         if (currentList.tasks[task].id === +taskID) {
-            delete currentList.tasks[task];
+            taskToDeleteName = task;
+            console.log(taskToDeleteName)
         }
     }
+    // Handle positioning
+    for (let task in currentList.tasks) {
+        if (currentList.tasks[task].position > currentList.tasks[taskToDeleteName].position) {
+            currentList.tasks[task].position--;
+        }
+    }
+    delete currentList.tasks[taskToDeleteName];
+
     refreshTasksID();
+    console.log(currentList.tasks)
     saveToLocalStorage();
 }
 
