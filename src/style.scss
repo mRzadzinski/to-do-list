@@ -351,7 +351,8 @@ textarea {
     color: $dark-font-color;
     background-color: white;
     transition: max-height 0.2s ease-out;
-    overflow: hidden;
+    overflow-x: clip;
+    overflow-y: auto;
     cursor: pointer;
 
     :hover {
