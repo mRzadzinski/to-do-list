@@ -518,8 +518,24 @@ function addToggleCompletedListeners() {
     }));
 }
 
-// Sort HTML
+function selectNewTask() {
+    const allTasks = document.querySelectorAll('.task');
 
+    allTasks.forEach(task => {
+        const taskContent = task.children[0].children[1].children[0].innerHTML;
+        const taskDetails = task.children[1].children[0].innerHTML;
+        const taskDateDiv = task.children[2];
+        const taskOrder = task.style.order;
+        const taskContentInput = task.children[0].children[1].children[1];
+
+        if (+taskOrder === 1 && taskContent === '' && taskDetails === '' && taskDateDiv.classList.contains('hidden')) {
+            task.classList.add('task-clicked');
+            taskContentInput.focus();
+        }
+    });
+}
+
+// Sort HTML
 function updateTasksOrder(sortedTaskArray) {
     const allTasks = document.querySelectorAll('.task');
 
@@ -571,4 +587,4 @@ modalCancelButtons.forEach(button => button.addEventListener('click', () => {
 createListBtn.onclick = () => addListModal.classList.remove('hidden');
 renameListBtn.onclick = () => renameListModal.classList.remove('hidden');
 
-export { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, modals };
+export { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, selectNewTask, modals };

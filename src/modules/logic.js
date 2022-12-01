@@ -1,4 +1,4 @@
-import { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, modals } from './DOMmanipulation';
+import { selectNewTask, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, modals } from './DOMmanipulation';
 
 // Local storage
 let localStorageWorks;
@@ -57,9 +57,9 @@ function saveToLocalStorage() {
         return;
 
     } else if (localStorageWorks) {
-        // localStorage.clear();
-        // localStorage.setItem("taskLists", JSON.stringify(taskLists));
-        // localStorage.setItem("currentListName", JSON.stringify(currentList.name));
+        localStorage.clear();
+        localStorage.setItem("taskLists", JSON.stringify(taskLists));
+        localStorage.setItem("currentListName", JSON.stringify(currentList.name));
     }
 }
 
@@ -190,6 +190,7 @@ const addTaskText = document.querySelector('#add-task-text');
     currentList.tasks[newTaskName] = Task('', '', '', '', 1, false);
     refreshTasksID();
     renderTasks();
+    setTimeout(selectNewTask, 10);
     saveToLocalStorage();
     console.table(currentList.tasks)
 }));
