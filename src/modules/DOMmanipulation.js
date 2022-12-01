@@ -579,12 +579,21 @@ const addListModal = document.querySelector('#add-list-modal');
 const renameListModal = document.querySelector('#rename-list-modal');
 const modals = document.querySelectorAll('.modal');
 const modalCancelButtons = document.querySelectorAll('.cancel-btn');
+const newListInput = document.querySelector('#new-list-input');
+const renameListInput = document.querySelector('#rename-list-input');
 
 modalCancelButtons.forEach(button => button.addEventListener('click', () => {
     modals.forEach(modal => modal.classList.add('hidden'));
 }));
 
-createListBtn.onclick = () => addListModal.classList.remove('hidden');
-renameListBtn.onclick = () => renameListModal.classList.remove('hidden');
+createListBtn.onclick = () => {
+    addListModal.classList.remove('hidden');
+    newListInput.focus();
+};
+renameListBtn.onclick = () => {
+    renameListModal.classList.remove('hidden');
+    renameListInput.focus();
+};
+
 
 export { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, selectNewTask, modals };
