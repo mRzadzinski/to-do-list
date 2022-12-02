@@ -65,14 +65,14 @@ function saveToLocalStorage() {
 
 
 // Objects
-const List = (name) => {
+const ListFactory = (name) => {
     let sortMethod = 'custom';
     let tasks = {}
     return { name, sortMethod, tasks }
 };
 
 
-const Task = (id, name, details, dateTime, position, completed) => {
+const TaskFactory = (id, name, details, dateTime, position, completed) => {
     return { id, name, details, dateTime, position, completed };
 };
 
@@ -81,17 +81,22 @@ let currentList;
 loadLocalStorage();
 
 function setCurrentList(list) { currentList = list };
-function createDefaultList() { taskLists.push(List('Quests')) }
+function createDefaultList() { taskLists.push(ListFactory('Quests')) }
 
 // Dummy content START
 if (storageIsEmpty) {
-    let weekend = List('Weekend');
-    let dance = Task(0, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
-    let sleep = Task(1, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
-    let eat = Task(2, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
-    let cook = Task(3, 'Cook', 'Sushi', '2022-10-07T01:11', 4, false);
-    let laze = Task(4, 'Laze', 'As much as you can', '2022-02-07T01:11', 5, false);
+    let weekend = ListFactory('Weekend');
+    let dance = TaskFactory(0, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
+    let sleep = TaskFactory(1, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
+    let eat = TaskFactory(2, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
+    let cook = TaskFactory(3, 'Cook', 'Sushi', '2022-10-07T01:11', 4, false);
+    let laze = TaskFactory(4, 'Laze', 'As much as you can', '2022-02-07T01:11', 5, false);
     
+    let week = ListFactory('Week');
+    let work = TaskFactory(0, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
+    let layDown = TaskFactory(1, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
+    let cry = TaskFactory(2, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, false);
+
     taskLists.push(weekend);
     weekend.tasks.dance = dance;
     weekend.tasks.sleep = sleep;
@@ -99,54 +104,18 @@ if (storageIsEmpty) {
     weekend.tasks.cook = cook;
     weekend.tasks.laze = laze;
     
-    let week = List('Week');
-    let work = Task(0, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
-    let layDown = Task(1, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
-    let cry = Task(2, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, false);
-    
     taskLists.push(week);
     week.tasks.work = work;
     week.tasks.layDown = layDown;
     week.tasks.cry = cry;
 }
 // Dummy content END
-
 if (!currentList) {
     currentList = taskLists[0];
 };
 
-// Create new list
-const addListDoneBtn = document.querySelector('#add-list-done-btn');
-const renameDoneBtn = document.querySelector('#rename-done-btn');
-const newListInput = document.querySelector('#new-list-input');
-const renameListInput = document.querySelector('#rename-list-input');
-
-addListDoneBtn.addEventListener('click', () => {
-    if (newListInput.value) {
-        // Ensure unique list name
-        let unique = true;
-        taskLists.forEach(list => {
-            if (list.name === newListInput.value) {
-                unique = false;
-                newListInput.setCustomValidity('Choose unique list name.');
-                newListInput.reportValidity();
-            }
-        });
-        if (unique === true) {
-            let newList = List(newListInput.value);
-            newListInput.value = '';
-            taskLists.push(newList);
-            currentList = newList;
-    
-            renderTaskLists();
-            renderTasks();
-            saveToLocalStorage();
-            modals.forEach(modal => modal.classList.add('hidden'));
-        }
-    }
-});
-
 // Rename List
+const renameDoneBtn = document.querySelector('#rename-done-btn');
 renameDoneBtn.addEventListener('click', () => {
     if (renameListInput.value) {
         currentList.name = renameListInput.value;
@@ -161,7 +130,6 @@ renameDoneBtn.addEventListener('click', () => {
 
 // Delete list
 const deleteListButton = document.querySelector('#delete-list-button');
-
 deleteListButton.onclick = () => {
     let index = taskLists.indexOf(currentList);
     taskLists.splice(index, 1);
@@ -171,7 +139,6 @@ deleteListButton.onclick = () => {
     renderTasks();
     saveToLocalStorage();
 };
-
 
 // Create new task
 const addTaskIcon = document.querySelector('#add-task-icon');
@@ -187,12 +154,11 @@ const addTaskText = document.querySelector('#add-task-text');
     }
 
     increaseTasksPosition();
-    currentList.tasks[newTaskName] = Task('', '', '', '', 1, false);
+    currentList.tasks[newTaskName] = TaskFactory('', '', '', '', 1, false);
     refreshTasksID();
     renderTasks();
     setTimeout(selectNewTask, 10);
     saveToLocalStorage();
-    console.table(currentList.tasks)
 }));
 
 function getUniqueName(newTaskName) {
@@ -205,7 +171,6 @@ function getUniqueName(newTaskName) {
             }
         }
     }
-
     return unique;
 }
 
@@ -228,11 +193,11 @@ function increaseTasksPosition() {
 }
 
 // Delete task
-
 function deleteTask(taskID) {
-    let taskToDeleteName;
 
     // Find task to delete
+    let taskToDeleteName;
+
     for (let task in currentList.tasks) {
         if (currentList.tasks[task].id === +taskID) {
             taskToDeleteName = task;
@@ -246,7 +211,6 @@ function deleteTask(taskID) {
     }
     delete currentList.tasks[taskToDeleteName];
 
-    console.table(currentList.tasks)
     refreshTasksID();
     saveToLocalStorage();
 }
@@ -262,7 +226,6 @@ function refreshTasksID() {
 }
 
 function toggleCompletedStatus(taskID) {
-
     for (let task in currentList.tasks) {
         if (currentList.tasks[task].id == taskID) {
 
@@ -283,12 +246,10 @@ function toggleCompletedStatus(taskID) {
             }
         }
     }
-    console.table(currentList.tasks)
     saveToLocalStorage();
 }
 
 // Delete completed tasks
-
 let deleteCompletedTasksBtn = document.querySelector('#delete-completed-tasks');
 deleteCompletedTasksBtn.onclick = deleteCompletedTasks;
 
@@ -298,7 +259,6 @@ function deleteCompletedTasks() {
             delete currentList.tasks[task];
         }
     }
-    console.table(currentList.tasks)
     renderTasks();
     saveToLocalStorage();
 }
@@ -341,12 +301,10 @@ function moveTask(taskID, destinationListName) {
             delete currentList.tasks[task];
         }
     }
-    console.table(currentList.tasks)
     refreshTasksID();
     renderTasks();
     saveToLocalStorage();
 }
-
 
 // Sort
 const sortNameBtn = document.querySelector('#sort-name-btn');
@@ -419,6 +377,7 @@ function getSortedTaskArray() {
         return ongoingTaskArray;
     }
 }
+
 // Helper for getSortedTaskArray function
 function excludeCompleted(currentListArray) {
     let ongoingTaskArray = [];
@@ -432,6 +391,7 @@ function excludeCompleted(currentListArray) {
 }
 
 function handleDropPosition(newPosition, taskToMoveID, dropTargetID) {
+    // Array of ongoing tasks in current list
     let sortedTasksArray = getSortedTaskArray();
     let taskToMove;
     let taskToMovePosition;
@@ -479,9 +439,7 @@ function handleDropPosition(newPosition, taskToMoveID, dropTargetID) {
             }
         }
     }
-;
     saveToLocalStorage();
-    console.table(currentList.tasks)
 }
 
 function getLastTaskID() {
@@ -496,6 +454,5 @@ function getLastTaskID() {
     return currentListArray[0][1].id;
 }
 
-
-export { currentList, setCurrentList, taskLists, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask, handleDropPosition, getLastTaskID, saveToLocalStorage };
-
+export { taskLists, currentList, setCurrentList, createDefaultList, deleteTask, sortTasks, moveTask, 
+        getLastTaskID, toggleCompletedStatus, handleDropPosition, saveToLocalStorage, ListFactory };

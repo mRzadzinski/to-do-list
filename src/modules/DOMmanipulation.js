@@ -1,6 +1,7 @@
 import circleIcon from '../img/circle-icon.png';
 import parseISO from 'date-fns/parseISO';
-import { taskLists, currentList, setCurrentList, deleteTask, toggleCompletedStatus, createDefaultList, sortTasks, moveTask, handleDropPosition, getLastTaskID, saveToLocalStorage } from './logic';
+import { taskLists, currentList, setCurrentList, createDefaultList, deleteTask, sortTasks, moveTask, 
+        getLastTaskID, toggleCompletedStatus, handleDropPosition, saveToLocalStorage, ListFactory } from './logic';
 
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
@@ -402,7 +403,6 @@ function switchList(button) {
             renderTasks();
         }
     });
-    console.table(currentList.tasks)
 }
 
 // Render task list header
@@ -473,6 +473,34 @@ function renderTasks() {
     addTaskListeners();
     sortTasks();
 }
+
+// Create new list
+const addListDoneBtn = document.querySelector('#add-list-done-btn');
+
+addListDoneBtn.addEventListener('click', () => {
+    if (newListInput.value) {
+        // Ensure unique list name
+        let unique = true;
+        taskLists.forEach(list => {
+            if (list.name === newListInput.value) {
+                unique = false;
+                newListInput.setCustomValidity('Choose unique list name.');
+                newListInput.reportValidity();
+            }
+        });
+        if (unique === true) {
+            let newList = ListFactory(newListInput.value);
+            newListInput.value = '';
+            taskLists.push(newList);
+            currentList = newList;
+    
+            renderTaskLists();
+            renderTasks();
+            saveToLocalStorage();
+            modals.forEach(modal => modal.classList.add('hidden'));
+        }
+    }
+});
 
 // Move task to different list
 function addMoveTaskListeners() {
@@ -570,7 +598,6 @@ function toggleSortCheckIcon() {
         }
     });
 }
-
 
 // Modals
 const createListBtn = document.querySelector('#create-list-btn');
