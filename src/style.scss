@@ -547,17 +547,16 @@ svg, img {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
     position: absolute;
     bottom: 14px;
     right: 15px;
     color: $dark-gray;
-    font-size: .85rem;
+    font-size: .8rem;
 }
 
 #github {
-    height: 35px;
-    width: 35px;
+    height: 30px;
+    width: 30px;
     padding-bottom: 0.2vh;
     transition: 0.2s;
     fill: $light-gray;
