@@ -58,6 +58,8 @@ const dateTimeHandler = (() => {
         } else {
             destination.innerHTML = dateTime;
         }
+
+        updateTasksOrder(getSortedTaskArray());
     }
 
     toggleDate();
