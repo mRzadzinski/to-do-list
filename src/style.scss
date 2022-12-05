@@ -549,16 +549,15 @@ svg, img {
     justify-content: center;
     gap: 3px;
     position: absolute;
-    bottom: 25px;
-    right: 40px;
+    bottom: 14px;
+    right: 15px;
     color: $dark-gray;
-    font-size: .94rem;
-    font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+    font-size: .85rem;
 }
 
 #github {
-    height: 38px;
-    width: 38px;
+    height: 35px;
+    width: 35px;
     padding-bottom: 0.2vh;
     transition: 0.2s;
     fill: $light-gray;
