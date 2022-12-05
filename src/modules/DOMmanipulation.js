@@ -1,7 +1,7 @@
 import circleIcon from '../img/circle-icon.png';
 import parseISO from 'date-fns/parseISO';
 import { taskLists, currentList, setCurrentList, createDefaultList, deleteTask, sortTasks, moveTask, 
-        getLastTaskID, toggleCompletedStatus, handleDropPosition, saveToLocalStorage, ListFactory } from './logic';
+        getLastTaskID, toggleCompletedStatus, handleDropPosition, saveToLocalStorage, ListFactory, getSortedTaskArray } from './logic';
 
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
@@ -12,7 +12,7 @@ let moveTaskButtons;
 
 const dateTimeHandler = (() => {
     let currentPicker;
-    let currentDateValue;
+    let dateDisplayDiv;
     
     addDateListeners();
     function addDateListeners() {
@@ -25,11 +25,11 @@ const dateTimeHandler = (() => {
                     if (div.contains(picker)) {
                         picker.showPicker();
                         currentPicker = picker;
-                        currentDateValue = currentPicker.previousElementSibling;
+                        dateDisplayDiv = currentPicker.previousElementSibling;
                     }
                 })
             });
-            div.addEventListener('change', () => convertDate(currentPicker.value, currentDateValue));
+            div.addEventListener('change', () => convertDate(currentPicker.value, dateDisplayDiv));
             div.addEventListener('change', toggleDate);
         });
     }
@@ -73,32 +73,27 @@ const dateTimeHandler = (() => {
             }
         });
     }
-
-    return {
-        addDateListeners, toggleDate, convertDate
-    };
-
+    return { addDateListeners, toggleDate, convertDate };
 })();
 
 
 
 const textInputHandler = (() => {
 
-    addTextAreasListeners();
     function addTextAreasListeners() {
         const textAreas = document.getElementsByTagName('textarea');
 
         for (let i = 0; i < textAreas.length; i++) {
             let height;
     
-            if (textAreas[i].scrollHeight == 0) {
+            if (+textAreas[i].scrollHeight === 0) {
                 height = 'auto';
             } else {
                 height = textAreas[i].scrollHeight;
             }
             textAreas[i].setAttribute('style', 'height:' + height + 'px;overflow-y:hidden;');
             textAreas[i].addEventListener('input', updateTextAreas);
-            textAreas[i].addEventListener('input', () => {
+            textAreas[i].addEventListener('change', () => {
                 // Determine task id
                 let myTaskID;
                 let dataSrc;
@@ -112,7 +107,7 @@ const textInputHandler = (() => {
                 // Determine which task to update
                 let myTask;
                 for (const task in currentList.tasks) {
-                    if (currentList.tasks[task].id == myTaskID) {
+                    if (currentList.tasks[task].id === +myTaskID) {
                         myTask = currentList.tasks[task];
                     } 
                 }
@@ -127,6 +122,8 @@ const textInputHandler = (() => {
                 // Update HTML
                 textAreas[i].innerHTML = textAreas[i].value;
                 textAreas[i].previousElementSibling.innerHTML = textAreas[i].value;
+
+                updateTasksOrder(getSortedTaskArray());
             });
         }
     }
@@ -153,10 +150,10 @@ const expandElementHandler = (() => {
     listNameHeader.onclick = () => expandElement(chooseDropdown('dropdown-task-list'));
     mainMenuBtn.onclick = () => expandElement(chooseDropdown('dropdown-menu'));
     completedButton.onclick = () => expandElement(completedList);
+
     addTaskMenuListeners();
     function addTaskMenuListeners() {
         const taskMenuButtons = document.querySelectorAll('.task-menu-button');
-
         taskMenuButtons.forEach(button => button.addEventListener('click', (event) => {
             // Bind menu to clicked task
             lastUsedTaskMenuBtn = button;
@@ -164,7 +161,13 @@ const expandElementHandler = (() => {
             currentTaskID = currentTaskHTML.dataset.id;
 
             // Set task menu position
-            taskMenu.style.top = lastUsedTaskMenuBtn.getBoundingClientRect().y + 'px';
+            let taskPositionY = lastUsedTaskMenuBtn.getBoundingClientRect().y;
+            // Prevent menu from overflowing screen
+            if (document.body.scrollHeight - taskPositionY < taskMenu.scrollHeight) {
+                taskMenu.style.top = document.body.scrollHeight - taskMenu.scrollHeight + 'px';
+            } else {
+                taskMenu.style.top = lastUsedTaskMenuBtn.getBoundingClientRect().y + 'px';
+            }         
             expandElement(taskMenu, event);
         }));
     }
@@ -216,10 +219,9 @@ const expandElementHandler = (() => {
     };
 
     // Expand / collapse clicked task
-    addResizeTaskListener();
     function addResizeTaskListener() {
-        const allTasks = document.querySelectorAll('.task');
 
+        const allTasks = document.querySelectorAll('.task');
         document.addEventListener('click', (event) => {
             allTasks.forEach(task => {
                 if (task.contains(event.target) && !task.classList.contains('completed') 
@@ -240,30 +242,28 @@ const expandElementHandler = (() => {
 const dragAndDropHandler = (() => {
     let dragElement;
 
-    document.addEventListener('DOMContentLoaded', addDragDropListeners);
-
     function addDragDropListeners() {
-        const allTasks = document.querySelectorAll('.task');
 
-        if (currentList.sortMethod === 'custom') {
-            allTasks.forEach(task => {
-                task.addEventListener('dragstart', handleDragStart);
-                task.addEventListener('dragover', handleDragOver);
-                task.addEventListener('dragleave', handleDragLeave);
-                task.addEventListener('dragend', handleDragEnd);
-                task.addEventListener('drop', handleDrop);
-            });
-        } 
+        const allTasks = document.querySelectorAll('.task');
+        allTasks.forEach(task => {
+            task.addEventListener('dragstart', handleDragStart);
+            task.addEventListener('dragover', handleDragOver);
+            task.addEventListener('dragleave', handleDragLeave);
+            task.addEventListener('dragend', handleDragEnd);
+            task.addEventListener('drop', handleDrop);
+        });
     }
 
     function handleDragStart() {
         if (currentList.sortMethod !== 'custom') return;
+        
         this.style.opacity = '.5'
         dragElement = this;
     }
 
     function handleDragOver(e) {
         if (currentList.sortMethod !== 'custom') return;
+
         e.preventDefault();
         let lastTask = getLastTaskHTML();
 
@@ -277,6 +277,7 @@ const dragAndDropHandler = (() => {
 
     function handleDragLeave() {
         if (currentList.sortMethod !== 'custom') return;
+
         // Add border to last element bottom when outside of droppable area
         let lastTask = getLastTaskHTML();
 
@@ -288,26 +289,24 @@ const dragAndDropHandler = (() => {
 
     function handleDrop(e) {
         if (currentList.sortMethod !== 'custom') return;
+
         let lastTask = getLastTaskHTML();
         let dragElementID = +dragElement.dataset.id;
         let dropTargetID = +this.dataset.id;
 
-
         e.stopPropagation();
 
         if (dragElement !== this && !lastTask.classList.contains('dragover-bottom-border')) {
-            
             handleDropPosition('before', dragElementID, dropTargetID);
-
-
         }
         return false;
     }
 
     function handleDragEnd() {
         if (currentList.sortMethod !== 'custom') return;
+
         let lastTask = getLastTaskHTML();
-        this.style.opacity = '1';
+        dragElement.style.opacity = '1';
 
         // Move task to end when dropping it outside of droppable area
         if (dragElement !== lastTask && lastTask.classList.contains('dragover-bottom-border')) {
@@ -398,7 +397,8 @@ function switchList(button) {
 
     taskLists.forEach(list => {
         if (list.name === clickedListName) {
-            setCurrentList(list)
+            setCurrentList(list);
+            saveToLocalStorage();
             renderTaskLists();
             renderTasks();
         }
@@ -415,14 +415,6 @@ const taskTemplate = document.querySelector('.task-template');
 const completedList = document.querySelector('.completed-list');
 const completedTaskTemplate = document.querySelector('.completed-task-template');
 
-function createTaskHTML() {
-    let newTask = taskTemplate.cloneNode(true);
-    newTask.classList.remove('task-template');
-    tasksContainer.prepend(newTask);
-    addTaskListeners();
-
-    return newTask;
-}
 renderTasks();
 function renderTasks() {
     tasksContainer.innerHTML = '';
@@ -476,7 +468,6 @@ function renderTasks() {
 
 // Create new list
 const addListDoneBtn = document.querySelector('#add-list-done-btn');
-
 addListDoneBtn.addEventListener('click', () => {
     if (newListInput.value) {
         // Ensure unique list name
@@ -492,7 +483,8 @@ addListDoneBtn.addEventListener('click', () => {
             let newList = ListFactory(newListInput.value);
             newListInput.value = '';
             taskLists.push(newList);
-            currentList = newList;
+            setCurrentList(newList);
+            saveToLocalStorage();
     
             renderTaskLists();
             renderTasks();
@@ -510,7 +502,6 @@ function addMoveTaskListeners() {
     }));
 }
 
-
 // Delete ongoing task
 const delTaskMenuBtn = document.querySelector('#delete-task-menu-button');
 delTaskMenuBtn.onclick = () => {
@@ -522,7 +513,7 @@ delTaskMenuBtn.onclick = () => {
 function deleteCompletedTaskListeners() {
     const deleteTaskButtons = document.querySelectorAll('.delete-task')
     deleteTaskButtons.forEach(button => button.addEventListener('click', (e) => {
-
+        
         if (button.parentNode.parentNode.parentNode.classList.contains('task')) {
             let completedTask = button.parentNode.parentNode.parentNode;
             let completedTaskID = completedTask.dataset.id;
@@ -578,7 +569,7 @@ function updateTasksOrder(sortedTaskArray) {
     }
 }
 
-function toggleSortCheckIcon() {
+function setSortCheckIcon() {
     const sortButtons = document.querySelectorAll('.sort-btn');
     let sortMethod = currentList.sortMethod;
 
@@ -622,5 +613,4 @@ renameListBtn.onclick = () => {
     renameListInput.focus();
 };
 
-
-export { createTaskHTML, addTaskListeners, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, selectNewTask, modals };
+export { renderTaskLists, renderTasks, setSortCheckIcon, updateTasksOrder, selectNewTask };

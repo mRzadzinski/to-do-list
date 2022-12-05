@@ -1,4 +1,4 @@
-import { selectNewTask, renderTaskLists, renderTasks, toggleSortCheckIcon, updateTasksOrder, modals } from './DOMmanipulation';
+import { selectNewTask, renderTaskLists, renderTasks, setSortCheckIcon, updateTasksOrder } from './DOMmanipulation';
 
 // Local storage
 let localStorageWorks;
@@ -115,7 +115,10 @@ if (!currentList) {
 };
 
 // Rename List
+const modals = document.querySelectorAll('.modal');
+const renameListInput = document.querySelector('#rename-list-input');
 const renameDoneBtn = document.querySelector('#rename-done-btn');
+
 renameDoneBtn.addEventListener('click', () => {
     if (renameListInput.value) {
         currentList.name = renameListInput.value;
@@ -327,7 +330,7 @@ sortNameBtn.onclick = () => {
 };
 
 function sortTasks() {
-    toggleSortCheckIcon();
+    setSortCheckIcon();
     let sortedArray = getSortedTaskArray();
     updateTasksOrder(sortedArray);
 }
@@ -455,4 +458,4 @@ function getLastTaskID() {
 }
 
 export { taskLists, currentList, setCurrentList, createDefaultList, deleteTask, sortTasks, moveTask, 
-        getLastTaskID, toggleCompletedStatus, handleDropPosition, saveToLocalStorage, ListFactory };
+        getLastTaskID, toggleCompletedStatus, handleDropPosition, saveToLocalStorage, ListFactory, getSortedTaskArray };
