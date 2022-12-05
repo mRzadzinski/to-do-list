@@ -33,8 +33,6 @@ body {
 }
 
 .container {
-    // display: flex;
-    // flex-direction: column;
     display: grid;
     grid-template-rows: 63px 40px 1fr 41px ;
 
@@ -371,8 +369,6 @@ textarea {
 }
 
 .dropdown.dropdown-task-menu {
-    // display: block;
-    // max-height: fit-content;
     width: 192px;
     left: 65px;
 
@@ -413,7 +409,6 @@ textarea {
 
 .modal {
     position: absolute;
-    // display: none;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -545,4 +540,29 @@ svg, img {
 
 .dragover-bottom-border {
     border-bottom: $dark-gray solid 2px;
+}
+
+#github-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    position: absolute;
+    bottom: 25px;
+    right: 40px;
+    color: $dark-gray;
+    font-size: .95rem;
+}
+
+#github {
+    height: 38px;
+    width: 38px;
+    padding-bottom: 0.2vh;
+    transition: 0.2s;
+    fill: $light-gray;
+}
+
+#github:hover {
+    transform: scale(1.1);
 }

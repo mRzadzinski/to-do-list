@@ -1,10 +1,13 @@
 import circleIcon from '../img/circle-icon.png';
+import gitIcon from '../img/github.png';
 import parseISO from 'date-fns/parseISO';
 import { taskLists, currentList, setCurrentList, createDefaultList, deleteTask, sortTasks, moveTask, 
         getLastTaskID, toggleCompletedStatus, handleDropPosition, saveToLocalStorage, ListFactory, getSortedTaskArray } from './logic';
 
 let circleElements = document.querySelectorAll('.circle-icon');
 circleElements.forEach(element =>  { element.src = circleIcon });
+let gitLink = document.querySelector('#github')
+gitLink.src = gitIcon;
 
 let currentTaskHTML;
 let currentTaskID;
