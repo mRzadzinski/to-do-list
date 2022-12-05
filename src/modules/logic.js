@@ -81,7 +81,7 @@ let currentList;
 loadLocalStorage();
 
 function setCurrentList(list) { currentList = list };
-function createDefaultList() { taskLists.push(ListFactory('Quests')) }
+function createDefaultList() { taskLists.push(ListFactory('List')) }
 
 // Dummy content START
 if (storageIsEmpty) {
