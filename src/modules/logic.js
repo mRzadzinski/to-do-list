@@ -93,8 +93,8 @@ if (storageIsEmpty) {
     let laze = TaskFactory(4, 'Laze', 'As much as you can', '2022-12-04T12:00', 5, false);
     
     let week = ListFactory('Week');
-    let work = TaskFactory(0, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
-    let layDown = TaskFactory(1, 'Lay down ', 'The blacktop', '2023-09-26T10:11', 2, false);
+    let work = TaskFactory(0, 'Work', 'On a highway', '2022-11-23T17:33', 1, false);
+    let layDown = TaskFactory(1, 'Lay down ', 'The blacktop', '2022-09-26T10:11', 2, false);
     let cry = TaskFactory(2, 'Cry', 'Your eyes out', '2022-12-26T11:51', 3, false);
 
     taskLists.push(weekend);
