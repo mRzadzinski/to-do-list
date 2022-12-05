@@ -86,11 +86,11 @@ function createDefaultList() { taskLists.push(ListFactory('Quests')) }
 // Dummy content START
 if (storageIsEmpty) {
     let weekend = ListFactory('Weekend');
-    let dance = TaskFactory(0, 'Dance', 'Samba', '2025-03-23T17:33', 3, false);
-    let sleep = TaskFactory(1, 'Sleep', 'Deep', '2022-12-26T11:11', 2, false);
-    let eat = TaskFactory(2, 'Eat', 'Sushi', '2022-08-26T11:11', 1, false);
-    let cook = TaskFactory(3, 'Cook', 'Sushi', '2022-10-07T01:11', 4, false);
-    let laze = TaskFactory(4, 'Laze', 'As much as you can', '2022-02-07T01:11', 5, false);
+    let dance = TaskFactory(0, 'Dance', 'Samba', '2022-12-03T10:00', 3, false);
+    let sleep = TaskFactory(1, 'Sleep', 'Deep', '', 2, false);
+    let eat = TaskFactory(2, 'Eat', 'Sushi', '2022-12-03T11:11', 1, false);
+    let cook = TaskFactory(3, 'Cook', 'Sushi', '', 4, false);
+    let laze = TaskFactory(4, 'Laze', 'As much as you can', '2022-12-04T12:00', 5, false);
     
     let week = ListFactory('Week');
     let work = TaskFactory(0, 'Work', 'On a highway', '2023-11-23T17:33', 1, false);
