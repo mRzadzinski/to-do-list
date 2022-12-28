@@ -37,6 +37,7 @@ body {
     grid-template-rows: 63px 40px 1fr 41px ;
 
     position: relative;
+    z-index: 2;
     width: 300px;
     height: 100vh;
     box-shadow: 0px 0px 25px -3px rgb(194, 194, 194);
@@ -548,6 +549,7 @@ svg, img {
     align-items: center;
     justify-content: center;
     position: absolute;
+    z-index: 1;
     bottom: 14px;
     right: 15px;
     color: $dark-gray;
