@@ -541,27 +541,3 @@ svg, img {
 .dragover-bottom-border {
     border-bottom: $dark-gray solid 2px;
 }
-
-#github-link {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 8px;
-    right: 15px;
-    color: $dark-gray;
-    font-size: .8rem;
-}
-
-#github {
-    height: 30px;
-    width: 30px;
-    padding-bottom: 0.2vh;
-    transition: 0.2s;
-    fill: $light-gray;
-}
-
-#github:hover {
-    transform: scale(1.1);
-}
